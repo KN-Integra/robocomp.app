@@ -84,6 +84,7 @@
 
 <script lang="ts" setup>
 const links = [
+  { name: 'My_test_link', link: '/blog/db_test'},
   { name: 'Harmonogram', link: '/blog/agenda' },
   { name: 'Regulaminy', link: '/blog/regulations' },
   // { name: 'Wyniki', link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
