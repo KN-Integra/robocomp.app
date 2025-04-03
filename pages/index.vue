@@ -25,7 +25,7 @@ useHead({
       </content-doc>
     </main>
 
-    <BigFooter class="mt-auto" />
+    <BigFooter class="mt-auto" logo-size="small" />
     <AppFooter />
   </div>
 </template>

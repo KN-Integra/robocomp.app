@@ -171,22 +171,42 @@ export default defineNuxtConfig({
     }
   }, */
 
+  routeRules: {
+    '/v1/**': {
+      cors: true,
+      headers: {
+        // CORS headers
+
+        // 'http://example:6006', has to be set to the requesting domain that you want to send the credentials back to
+        'Access-Control-Allow-Origin': '*',
+        // 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
+        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Credentials': 'true',
+        // 'Origin, Content-Type, Accept, Authorization, X-Requested-With'
+        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Expose-Headers': '*'
+        // 'Access-Control-Max-Age': '7200', // 7200 = caching 2 hours (Chromium default), https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age#directives
+      }
+    }
+  },
+
   css: [
     '@/assets/css/main.css',
     '@/assets/css/tailwind.css',
     '@/assets/css/flowbite.css',
     '@/assets/css/content.css',
     '@/assets/css/diana.css',
+    '@/assets/css/treeview.css',
     'vue3-treeview/dist/style.css',
-    '@/assets/css/treeview.css'
+    '@vuepic/vue-datepicker/dist/main.css'
   ],
 
   components: true,
 
-  colorMode: {
+  /* colorMode: {
     preference: 'dark',
     fallback: 'dark'
-  },
+  }, */
 
   content: {
     documentDriven: true,
@@ -219,6 +239,7 @@ export default defineNuxtConfig({
 
   build: {
     transpile: [
+      '@vuepic/vue-datepicker',
       '@fortawesome/fontawesome-svg-core',
       '@fortawesome/free-solid-svg-icons',
       '@fortawesome/free-regular-svg-icons',
@@ -237,6 +258,11 @@ export default defineNuxtConfig({
     META_API_KEY: process.env.META_API_KEY,
     META_GRAPH_ENDPOINT: process.env.META_GRAPH_ENDPOINT,
     META_GRAPH_VERSION: process.env.META_GRAPH_VERSION,
-    ROBOCOMP_PAGE_ID: process.env.ROBOCOMP_PAGE_ID
-  }
+    ROBOCOMP_PAGE_ID: process.env.ROBOCOMP_PAGE_ID,
+    public: {
+      INTEGRA_API_URL: process.env.INTEGRA_API_URL
+    }
+  },
+
+  compatibilityDate: '2024-10-24'
 })

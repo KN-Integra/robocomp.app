@@ -2,19 +2,24 @@
 import { SpeedInsights } from '@vercel/speed-insights/nuxt'
 import { initFlowbite } from 'flowbite'
 
+import { useUserStore } from '~/store/user.store'
+
+const runtimeConfig = useRuntimeConfig()
 const { $pwa } = useNuxtApp()
 
 const $route = useRoute()
-  
-useHead(() => {
+
+const userStore = useUserStore()
+
+useHead(() => ({
   link: [
     {
       rel: 'canonical',
       href: 'https://www.robocomp.info' + $route.path
     }
   ]
-})
-  
+}))
+
 onMounted(async () => {
   if (!$pwa) {
     return
@@ -42,6 +47,8 @@ onMounted(async () => {
 })
 
 onBeforeMount(() => {
+  userStore.INTEGRA_API_URL = runtimeConfig.public.INTEGRA_API_URL
+
   initFlowbite()
 })
 </script>

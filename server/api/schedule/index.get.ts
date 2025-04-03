@@ -1,6 +1,8 @@
 import { createKysely } from '@vercel/postgres-kysely'
 import { sql } from 'kysely'
 
+import { Competition } from '~/settings/constants'
+
 import type { H3Error } from 'h3'
 
 export interface Schedule {
@@ -17,6 +19,7 @@ export interface ScheduleResponse {
     competitionNames: string[]
     competitionKeys: string[]
     scheduleTypes: string[]
+    events: string[]
   }
   statusCode: number
 }
@@ -28,6 +31,7 @@ export default defineEventHandler(async (): Promise<ScheduleResponse | H3Error> 
     const schedules = (await db
       .selectFrom('robocomp.schedules' as any)
       .select([
+        'id',
         sql<string>`REPLACE(name, ' ' || CAST(${new Date().getFullYear()} AS VARCHAR(4)), '')`.as('name'),
         'start_date',
         'end_date',
@@ -44,17 +48,27 @@ export default defineEventHandler(async (): Promise<ScheduleResponse | H3Error> 
       .toSorted((a, b) => b.competition!.localeCompare(a.competition!))
       .map((schedule) => ({
         key: schedule.competition,
-        name: schedule.name.split(' ').slice(1).join(' '),
+        name: Competition[schedule.competition as keyof typeof Competition],
         type: schedule.name.split(' ')[0]
       }))
+
+    const events = schedules
+      .filter((schedule) => schedule.competition === 'events')
+      .map((schedule) => schedule.name.split(' ').slice(1).join(' '))
 
     return {
       statusCode: 200,
       data: {
-        results: schedules as Schedule[],
+        results: schedules.map((schedule) => ({
+          ...schedule,
+          name: schedule.competition
+            ? `${schedule.name.split(' ')[0]} ${Competition[schedule.competition as keyof typeof Competition]}`
+            : schedule.name
+        })) as Schedule[],
         competitionNames: [...new Set(competitions.map((competition) => competition.name))],
         competitionKeys: [...new Set(competitions.map((competition) => competition.key!))],
-        scheduleTypes: [...new Set(competitions.map((competition) => competition.type))]
+        scheduleTypes: [...new Set(competitions.map((competition) => competition.type))],
+        events
       }
     }
   } catch (error) {
