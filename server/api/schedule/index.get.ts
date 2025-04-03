@@ -29,7 +29,7 @@ export default defineEventHandler(async (): Promise<ScheduleResponse | H3Error> 
 
   // TEMP: we are showing archival data for now
   // const year = query.year || new Date().getFullYear().toString()
-  const year = 2024
+  const year = '2024'
 
   try {
     const schedules = (await db
