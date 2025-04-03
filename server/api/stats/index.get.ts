@@ -44,7 +44,9 @@ export interface StatsResponse {
 export default defineEventHandler(async (event): Promise<StatsResponse | NuxtError> => {
   const query = getQuery<Partial<StatsQuery>>(event)
 
-  const year = query.year || new Date().getFullYear().toString()
+  // TEMP: we are showing archival data for now
+  // const year = query.year || new Date().getFullYear().toString()
+  const year = 2024
 
   if (!year.match(/^20\d{2}$/)) {
     return createError({
