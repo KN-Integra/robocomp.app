@@ -27,6 +27,10 @@ export interface ScheduleResponse {
 export default defineEventHandler(async (): Promise<ScheduleResponse | H3Error> => {
   const db = createKysely()
 
+  // TEMP: we are showing archival data for now
+  // const year = query.year || new Date().getFullYear().toString()
+  const year = 2024
+
   try {
     const schedules = (await db
       .selectFrom('robocomp.schedules' as any)
@@ -37,7 +41,7 @@ export default defineEventHandler(async (): Promise<ScheduleResponse | H3Error> 
         'end_date',
         'competition'
       ] as any)
-      .where('name' as any, 'like', '% ' + new Date().getFullYear())
+      .where('name' as any, 'like', '% ' + year)
       .where('name' as any, 'not like', '%Jury%')
       .execute()) as Schedule[]
 
