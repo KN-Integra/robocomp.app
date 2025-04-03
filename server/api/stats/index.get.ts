@@ -46,7 +46,7 @@ export default defineEventHandler(async (event): Promise<StatsResponse | NuxtErr
 
   // TEMP: we are showing archival data for now
   // TODO: Revisit this temporary change when archival data is no longer needed
-  const year = 2024
+  const year = '2024'
   // const year = query.year || new Date().getFullYear().toString()
   
   if (!year.match(/^20\d{2}$/)) {
