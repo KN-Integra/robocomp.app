@@ -45,9 +45,8 @@ export default defineEventHandler(async (event): Promise<StatsResponse | NuxtErr
   const query = getQuery<Partial<StatsQuery>>(event)
 
   // TEMP: we are showing archival data for now
-  // const year = query.year || new Date().getFullYear().toString()
-  const year = 2024
-
+  const year = query.year || new Date().getFullYear().toString()
+  // TODO: Revisit this temporary change when archival data is no longer needed
   if (!year.match(/^20\d{2}$/)) {
     return createError({
       statusCode: 400,
