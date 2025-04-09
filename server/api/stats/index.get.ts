@@ -44,11 +44,8 @@ export interface StatsResponse {
 export default defineEventHandler(async (event): Promise<StatsResponse | NuxtError> => {
   const query = getQuery<Partial<StatsQuery>>(event)
 
-  // TEMP: we are showing archival data for now
-  // TODO: Revisit this temporary change when archival data is no longer needed
-  const year = '2024'
-  // const year = query.year || new Date().getFullYear().toString()
-  
+  const year = query.year || new Date().getFullYear().toString()
+
   if (!year.match(/^20\d{2}$/)) {
     return createError({
       statusCode: 400,
@@ -87,15 +84,15 @@ export default defineEventHandler(async (event): Promise<StatsResponse | NuxtErr
           results.competitions = (
             (await db
               .withSchema('robocomp')
-              .selectFrom('robots')
-              .innerJoin('competitions', 'robots.competition', 'competitions.name')
+              .selectFrom('robot')
+              .innerJoin('competition', 'robot.competition', 'competition.name')
               .select(({ fn }) => [
-                sql`competitions.name as competition`,
+                sql`competition.name as competition`,
                 fn.countAll().as('count'),
-                'competitions.color'
+                'competition.color'
               ])
-              .groupBy(['competitions.name', 'competitions.color'])
-              .orderBy('competitions.name')
+              .groupBy(['competition.name', 'competition.color'])
+              .orderBy('competition.name')
               .where('year', '=', Number(year))
               .execute()) || []
           ).map((row) => ({

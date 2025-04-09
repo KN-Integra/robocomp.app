@@ -102,16 +102,30 @@ const links = [
   { name: 'Kontakt', link: '/blog/contact' },
   { name: 'O\xA0nas', link: '/blog/about' },
   { name: 'Galeria', link: '/blog/gallery' },
-  { name: 'Patroni', link: '/partners' },
+  { name: 'Partnerzy', link: '/partners' },
   { name: 'Statystyki', link: '/blog/stats' },
   { name: 'Zespoły', link: '/blog/teams' },
-  { name: 'Dokumentacja', link: '/docs' }
+  { name: 'Dokumentacja', link: '/docs' },
+  { name: 'Archiwum', link: '/archive' }
 ]
 
 const $route = useRoute()
 
 const filteredLinks = computed(() => {
-  const filtered = links.filter((link) => link.link !== $route.path)
+  let filtered = links.filter((link) => link.link !== $route.path)
+
+  console.info($route.path)
+
+  if ($route.path.startsWith('/archive')) {
+    const year = $route.path.split('/')[2]
+    filtered = filtered
+      .map((link) => ({
+        ...link,
+        link: /(^http)|(^\/archive)/.test(link.link) ? link.link : `/archive/${year}${link.link}`
+      }))
+      .filter((link) => link.link !== $route.path)
+    filtered.unshift({ name: 'Archiwalna strona główna', link: `/archive/${year}` })
+  }
 
   if (filtered.length < links.length) {
     filtered.unshift({ name: 'Strona główna', link: '/' })

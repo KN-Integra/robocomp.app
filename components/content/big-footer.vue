@@ -3,10 +3,84 @@ const $props = defineProps<{
   logoSize?: 'small' | 'medium' | 'large'
   linkType?: 'internal' | 'external'
 }>()
+
+interface IPartner {
+  name: string
+  logo: string
+  url: string
+  internalName: string
+  type: 'gold' | 'silver' | 'bronze' | 'media' | 'support' | 'honorary' | 'medical'
+}
+
+const $route = useRoute()
+const imgPathPrefix = computed(() =>
+  $route.path.startsWith('/archive') ? `/archive/${$route.path.split('/')[2]}` : ''
+)
+
+enum TypeToDisplay {
+  gold = 'Złoci Partnerzy',
+  silver = 'Srebrni Partnerzy',
+  bronze = 'Brązowi Partnerzy',
+  medical = 'Opieka Medyczna',
+  media = 'Patroni Medialni',
+  honorary = 'Patronat Honorowy',
+  support = 'Wsparcie Wydarzenia'
+}
+
+const { status, data: partners } = useAsyncData<Record<string, IPartner[]>>('partners', async () => {
+  const data = await $fetch(imgPathPrefix.value + '/partners/partners.txt')
+
+  if (!data) {
+    return {
+      gold: [],
+      silver: [],
+      bronze: [],
+      medical: [],
+      media: [],
+      honorary: [],
+      support: []
+    }
+  }
+
+  const partnerData = JSON.parse(data as string) as IPartner[]
+
+  const mappedPartnerData = {
+    gold: partnerData.filter((partner) => partner.type === 'gold'),
+    silver: partnerData.filter((partner) => partner.type === 'silver'),
+    bronze: partnerData.filter((partner) => partner.type === 'bronze'),
+    medical: partnerData.filter((partner) => partner.type === 'medical'),
+    media: partnerData.filter((partner) => partner.type === 'media'),
+    honorary: partnerData.filter((partner) => partner.type === 'honorary'),
+    support: partnerData.filter((partner) => partner.type === 'support')
+  }
+
+  for (const type in mappedPartnerData) {
+    if (mappedPartnerData[type as keyof typeof mappedPartnerData].length === 0) {
+      delete mappedPartnerData[type as keyof typeof mappedPartnerData]
+    }
+  }
+
+  return mappedPartnerData
+})
+
+onMounted(() => {
+  const interval = setInterval(async () => {
+    await refreshNuxtData('partners')
+
+    if (status.value === 'success') {
+      clearInterval(interval)
+    }
+  }, 500)
+
+  onBeforeUnmount(() => {
+    clearInterval(interval)
+  })
+})
 </script>
 
 <template>
   <div
+    v-if="partners"
     class="big-footer flex flex-col items-center gap-8 py-8 z-0"
     :class="{
       'small-logo': $props.logoSize === 'small',
@@ -23,7 +97,7 @@ const $props = defineProps<{
             target="_blank"
             rel="noopener noreferrer"
             class="partner-logo"
-            :style="`background-image: url('/logo/agh${$props.logoSize === 'small' ? '' : '-text'}.jpg')`"
+            :style="`background-image: url('${imgPathPrefix}/logo/agh${$props.logoSize === 'small' ? '' : '-text'}.jpg')`"
           >
             <span class="sr-only">Akademia Górniczo-Hutnicza</span>
           </NuxtLink>
@@ -38,7 +112,7 @@ const $props = defineProps<{
             target="_blank"
             rel="noopener noreferrer"
             class="partner-logo"
-            style="background-image: url('/logo/weaiib.jpg')"
+            :style="`background-image: url('${imgPathPrefix}/logo/weaiib.jpg')`"
           >
             <span class="sr-only">Wydział Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej</span>
           </NuxtLink>
@@ -55,7 +129,7 @@ const $props = defineProps<{
             target="_blank"
             rel="noopener noreferrer"
             class="partner-logo"
-            style="background-image: url('/logo/kair.jpg')"
+            :style="`background-image: url('${imgPathPrefix}/logo/kair.jpg')`"
           >
             <span class="sr-only">Katedra Automatyki i Robotyki</span>
           </NuxtLink>
@@ -70,7 +144,7 @@ const $props = defineProps<{
             :target="$props.linkType === 'internal' ? '_self' : '_blank'"
             rel="noopener noreferrer"
             class="partner-logo"
-            style="background-image: url('/logo/integra.png')"
+            :style="`background-image: url('${imgPathPrefix}/logo/integra.png')`"
           >
             <span class="sr-only">Koło Naukowe INTEGRA</span>
           </NuxtLink>
@@ -85,7 +159,7 @@ const $props = defineProps<{
             target="_blank"
             rel="noopener noreferrer"
             class="partner-logo"
-            style="background-image: url('/logo/inuni.png')"
+            :style="`background-image: url('${imgPathPrefix}/logo/inuni.png')`"
           >
             <span class="sr-only">Fundacja InUnI</span>
           </NuxtLink>
@@ -95,185 +169,32 @@ const $props = defineProps<{
       </span>
     </div>
 
-    <div class="flex flex-col items-center gap-8">
-      <div class="primary-header mt-6">Złoci Partnerzy</div>
+    <div v-for="(partnerList, type) in partners" :key="type">
+      <div v-if="partnerList.length" class="flex flex-col items-center gap-8">
+        <div class="primary-header mt-6">{{ TypeToDisplay[type as keyof typeof TypeToDisplay] }}</div>
 
-      <span class="inline-flex gap-8 flex-wrap justify-center">
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            :to="$props.linkType === 'internal' ? '/partners/tme' : 'https://www.tme.eu/'"
-            :target="$props.linkType === 'internal' ? '_self' : '_blank'"
-            rel="noopener noreferrer"
-            class="partner-logo"
-            style="background-image: url('/logo/tme.png')"
-          >
-            <span class="sr-only">TME Sp. z o.o.</span>
-          </NuxtLink>
+        <span class="inline-flex gap-8 flex-wrap justify-center">
+          <span v-for="partner in partnerList" :key="partner.internalName" class="flex flex-col items-center">
+            <NuxtLink
+              :to="$props.linkType === 'internal' ? `/partners/${partner.internalName}` : partner.url"
+              :target="$props.linkType === 'internal' ? '_self' : '_blank'"
+              rel="noopener noreferrer"
+              class="partner-logo"
+              :style="`background-image: url('${imgPathPrefix}${partner.logo}')`"
+            >
+              <span class="sr-only">{{ partner.name }}</span>
+            </NuxtLink>
 
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">TME Sp. z o.o.</span>
+            <span
+              v-if="$props.logoSize !== 'small' || type === 'honorary'"
+              class="font-bold text-xl text-center text-wrap w-48"
+              v-html="partner.name"
+            ></span>
+          </span>
         </span>
-      </span>
-    </div>
+      </div>
 
-    <div class="flex flex-col items-center gap-8">
-      <div class="primary-header mt-6">Srebrni Partnerzy</div>
-
-      <span class="inline-flex gap-8 flex-wrap justify-center">
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            :to="$props.linkType === 'internal' ? '/partners/astar' : 'https://www.astar.pl/'"
-            :target="$props.linkType === 'internal' ? '_self' : '_blank'"
-            rel="noopener noreferrer"
-            class="partner-logo"
-            style="background-image: url('/logo/astar.png')"
-          >
-            <span class="sr-only">ASTAR Sp. z o.o.</span>
-          </NuxtLink>
-
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">ASTAR Sp. z o.o.</span>
-        </span>
-
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            :to="$props.linkType === 'internal' ? '/partners/mab-robotics' : 'https://www.mabrobotics.pl/'"
-            :target="$props.linkType === 'internal' ? '_self' : '_blank'"
-            rel="noopener noreferrer"
-            class="partner-logo"
-            style="background-image: url('/logo/mab-robotics.png')"
-          >
-            <span class="sr-only">MAb Robotics Sp. z o.o.</span>
-          </NuxtLink>
-
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">MAB Robotics Sp. z o.o.</span>
-        </span>
-
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            :to="$props.linkType === 'internal' ? '/partners/manu' : 'https://manuonline.pl/'"
-            :target="$props.linkType === 'internal' ? '_self' : '_blank'"
-            rel="noopener noreferrer"
-            class="partner-logo"
-            style="background-image: url('/logo/manu.png')"
-          >
-            <span class="sr-only">Małopolska Akademia Nabywania Umiejętności</span>
-          </NuxtLink>
-
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Małopolska Akademia</span>
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Nabywania Umiejętności</span>
-        </span>
-      </span>
-    </div>
-
-    <div class="flex flex-col items-center gap-8">
-      <div class="primary-header mt-6">Partner Medyczny</div>
-
-      <span class="inline-flex gap-8 flex-wrap justify-center">
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            :to="$props.linkType === 'internal' ? '/partners/scanmed' : 'https://www.scanmed.pl'"
-            :target="$props.linkType === 'internal' ? '_self' : '_blank'"
-            rel="noopener noreferrer"
-            class="partner-logo"
-            style="background-image: url('/logo/scanmed.jpg')"
-          >
-            <span class="sr-only">Grupa Scanmed</span>
-          </NuxtLink>
-
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Grupa Scanmed</span>
-        </span>
-      </span>
-    </div>
-
-    <div class="flex flex-col items-center gap-8">
-      <div class="primary-header mt-6">Patroni Medialni</div>
-
-      <span class="inline-flex gap-8 flex-wrap justify-center">
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            to="https://www.krakow.pl/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="partner-logo"
-            style="background-image: url('/logo/krakow-pl.jpg')"
-          >
-            <span class="sr-only">Portal Magiczny Kraków</span>
-          </NuxtLink>
-
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Magiczny Kraków</span>
-        </span>
-      </span>
-    </div>
-
-    <div class="flex flex-col items-center gap-8">
-      <div class="primary-header mt-6">Patronat Honorowy</div>
-
-      <span class="inline-flex gap-8 flex-wrap justify-center">
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            to="https://www.krakow.pl/3401,obj,14437,patronaty.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="partner-logo"
-            style="background-image: url('/logo/miasto-krakow.jpg')"
-          >
-            <span class="sr-only">Miasto Kraków</span>
-          </NuxtLink>
-
-          <span class="font-bold text-xl mt-2">Aleksander Miszalski</span>
-          <span class="text-lg">Prezydent Miasta Krakowa</span>
-        </span>
-      </span>
-    </div>
-
-    <div class="flex flex-col items-center gap-8">
-      <div class="primary-header mt-6">Wsparcie Wydarzenia</div>
-
-      <span class="inline-flex gap-8 flex-wrap justify-center">
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            :to="$props.linkType === 'internal' ? '/partners/rainlabs' : 'https://www.rainlabs.pl/'"
-            :target="$props.linkType === 'internal' ? '_self' : '_blank'"
-            rel="noopener noreferrer"
-            class="partner-logo"
-            style="background-image: url('/logo/rainlabs.png')"
-          >
-            <span class="sr-only">Rainlabs Services Sp. z o.o.</span>
-          </NuxtLink>
-
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Rainlabs Services Sp. z o.o.</span>
-        </span>
-
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            to="https://iet.agh.edu.pl/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="partner-logo !p-6"
-            style="background-image: url('/logo/wiet.png')"
-          >
-            <span class="sr-only">Wydział Informatyki, Elektroniki i Telekomunikacji</span>
-          </NuxtLink>
-
-          <span v-if="$props.logoSize !== 'small'" class="text-lg">Wydział</span>
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-base"> Informatyki, Elektroniki </span>
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-base"> i Telekomunikacji </span>
-        </span>
-
-        <span class="flex flex-col items-center">
-          <NuxtLink
-            :to="$props.linkType === 'internal' ? '/partners/uciekamy-cukrzycy' : 'https://www.uciekamycukrzycy.pl'"
-            :target="$props.linkType === 'internal' ? '_self' : '_blank'"
-            rel="noopener noreferrer"
-            class="partner-logo !p-6"
-            style="background-image: url('/logo/uciekamy-cukrzycy.png')"
-          >
-            <span class="sr-only">Fundacja Uciekamy Cukrzycy</span>
-          </NuxtLink>
-
-          <span v-if="$props.logoSize !== 'small'" class="text-lg">Fundacja</span>
-          <span v-if="$props.logoSize !== 'small'" class="text-lg font-bold">Uciekamy Cukrzycy</span>
-        </span>
-      </span>
+      <div v-else class="-mt-8">aa</div>
     </div>
   </div>
 </template>

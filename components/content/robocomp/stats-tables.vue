@@ -3,9 +3,13 @@ import { FwbTable, FwbTableHead, FwbTableBody, FwbTableHeadCell, FwbTableCell, F
 
 import type { StatsResponse } from '~/server/api/stats/index.get'
 
+const $route = useRoute()
+const year = computed(() => ($route.path.startsWith('/archive') ? $route.path.split('/')[2] : new Date().getFullYear()))
+
 const { data: stats } = useLazyFetch<StatsResponse>('/api/stats', {
   query: {
-    types: ['total', 'average']
+    types: ['total', 'average'],
+    year: year.value
   }
 })
 </script>
@@ -23,8 +27,8 @@ const { data: stats } = useLazyFetch<StatsResponse>('/api/stats', {
         <fwb-table-body>
           <fwb-table-row>
             <fwb-table-cell>{{ stats.data.total.total_teams }}</fwb-table-cell>
-            <fwb-table-cell>{{ stats.data.total.total_members_count }}</fwb-table-cell>
-            <fwb-table-cell>{{ stats.data.total.total_robots_count }}</fwb-table-cell>
+            <fwb-table-cell>{{ stats.data.total.total_members_count || 0 }}</fwb-table-cell>
+            <fwb-table-cell>{{ stats.data.total.total_robots_count || 0 }}</fwb-table-cell>
           </fwb-table-row>
         </fwb-table-body>
       </fwb-table>

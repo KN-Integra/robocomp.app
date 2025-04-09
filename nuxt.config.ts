@@ -228,6 +228,7 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxtjs/robots',
+    'nuxt-content-assets',
     '@nuxt/content',
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
@@ -264,5 +265,5 @@ export default defineNuxtConfig({
     }
   },
 
-  compatibilityDate: '2024-10-24'
+  compatibilityDate: '2025-04-09'
 })

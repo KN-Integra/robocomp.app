@@ -113,3 +113,4 @@ dist
 static/sw.js
 .vercel
 .env*.local
+.qodo
