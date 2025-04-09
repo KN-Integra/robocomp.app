@@ -116,14 +116,14 @@ const filteredLinks = computed(() => {
 
   console.info($route.path)
 
-  if ($route.path.startsWith('/archive')) {
+  if ($route.path.startsWith('/archive') && $route.path !== '/archive') {
     const year = $route.path.split('/')[2]
     filtered = filtered
       .map((link) => ({
         ...link,
         link: /(^http)|(^\/archive)/.test(link.link) ? link.link : `/archive/${year}${link.link}`
       }))
-      .filter((link) => link.link !== $route.path)
+      .filter((link) => link.link !== $route.path && link.name !== 'Rejestracja')
     filtered.unshift({ name: 'Archiwalna strona główna', link: `/archive/${year}` })
   }
 

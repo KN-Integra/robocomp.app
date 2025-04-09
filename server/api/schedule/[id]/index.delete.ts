@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const db = createKysely()
 
   try {
-    await db.deleteFrom('robocomp.schedules').where('id', '=', id).executeTakeFirst()
+    await db.deleteFrom('robocomp.schedule').where('id', '=', id).executeTakeFirst()
   } catch (error) {
     console.error(error)
 

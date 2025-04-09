@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     await db
-      .updateTable('robocomp.schedules')
+      .updateTable('robocomp.schedule')
       .set({
         start_date: body.start_date,
         end_date: body.end_date

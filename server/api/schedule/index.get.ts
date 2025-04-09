@@ -24,16 +24,22 @@ export interface ScheduleResponse {
   statusCode: number
 }
 
-export default defineEventHandler(async (): Promise<ScheduleResponse | H3Error> => {
-  const db = createKysely()
+export default defineEventHandler(async (event): Promise<ScheduleResponse | H3Error> => {
+  const query = getQuery<Partial<{ year: string }>>(event)
+  const year = query.year || new Date().getFullYear().toString()
 
-  // TEMP: we are showing archival data for now
-  // const year = query.year || new Date().getFullYear().toString()
-  const year = '2024'
+  if (!year.match(/^20\d{2}$/)) {
+    return createError({
+      statusCode: 400,
+      statusMessage: 'Invalid year'
+    })
+  }
+
+  const db = createKysely()
 
   try {
     const schedules = (await db
-      .selectFrom('robocomp.schedules' as any)
+      .selectFrom('robocomp.schedule' as any)
       .select([
         'id',
         sql<string>`REPLACE(name, ' ' || CAST(${new Date().getFullYear()} AS VARCHAR(4)), '')`.as('name'),

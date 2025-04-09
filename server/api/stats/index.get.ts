@@ -1,10 +1,15 @@
-import { createKysely } from '@vercel/postgres-kysely'
-import { sql } from 'kysely'
+import { Pool, neonConfig } from '@neondatabase/serverless'
+import { Kysely, PostgresDialect, sql } from 'kysely'
+import ws from 'ws'
 
 import { Competition } from '~/settings/constants'
 
 import type { NuxtError } from '@nuxt/types'
 import type { Database } from '~/types/db/Database'
+
+neonConfig.webSocketConstructor = ws
+
+const runtimeConfig = useRuntimeConfig()
 
 export enum StatsTypes {
   'competitions' = 'competitions',
@@ -43,7 +48,6 @@ export interface StatsResponse {
 
 export default defineEventHandler(async (event): Promise<StatsResponse | NuxtError> => {
   const query = getQuery<Partial<StatsQuery>>(event)
-
   const year = query.year || new Date().getFullYear().toString()
 
   if (!year.match(/^20\d{2}$/)) {
@@ -75,7 +79,23 @@ export default defineEventHandler(async (event): Promise<StatsResponse | NuxtErr
 
   const results: StatsResults = {}
 
-  const db = createKysely<Database>()
+  console.info({
+    user: runtimeConfig.POSTGRES_USER,
+    password: runtimeConfig.POSTGRES_PASSWORD,
+    host: runtimeConfig.POSTGRES_HOST,
+    database: runtimeConfig.POSTGRES_DATABASE
+  })
+
+  const pool = new Pool({
+    user: runtimeConfig.POSTGRES_USER,
+    password: runtimeConfig.POSTGRES_PASSWORD,
+    host: runtimeConfig.POSTGRES_HOST,
+    database: runtimeConfig.POSTGRES_DATABASE
+  })
+
+  const db = new Kysely<Database>({
+    dialect: new PostgresDialect({ pool })
+  })
 
   try {
     for (const type of uniqueTypes) {
@@ -93,7 +113,7 @@ export default defineEventHandler(async (event): Promise<StatsResponse | NuxtErr
               ])
               .groupBy(['competition.name', 'competition.color'])
               .orderBy('competition.name')
-              .where('year', '=', Number(year))
+              .where('robot.year', '=', Number(year))
               .execute()) || []
           ).map((row) => ({
             ...row,
