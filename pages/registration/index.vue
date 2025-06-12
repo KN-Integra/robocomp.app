@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+
+import type { CompetitionResponse } from '~/server/api/competition/index.get'
 
 interface Player {
   name: string
@@ -17,7 +19,6 @@ const maxRobots = 5
 
 const teamName = ref('')
 
-// KAPITAN: 1 zawodnik + dodatkowe dane
 const captain = reactive({
   name: '',
   shirtSize: '',
@@ -29,14 +30,11 @@ const captain = reactive({
   country: ''
 })
 
-// POZOSTALI ZAWODNICY: do 9 (z kapitanem razem 10)
 const players = ref<Player[]>([])
 
-// ROBOTY
 const robots = ref<Robot[]>([])
 
-// KATEGORIE – pobierane z competition
-const categories = ref<string[]>(['Line Follower', 'Sumo', 'Micromouse', 'Drony', 'Humanoidy'])
+const categories = ref<string[]>([])
 const countries = ref<[string, string][]>([
   ['Polska', 'PL'],
   ['Niemcy', 'DE'],
@@ -103,6 +101,17 @@ function submitForm() {
     robots: robots.value
   })
 }
+
+// Fetch categories from API on mount
+onMounted(async () => {
+  try {
+    const response = await fetch('api/competition')
+    const data = (await response.json()) as CompetitionResponse
+    categories.value = data.data.competitions.map((element) => element.name) || []
+  } catch (error) {
+    console.error('Error in loading robots categories:', error)
+  }
+})
 </script>
 
 <template>

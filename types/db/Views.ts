@@ -11,6 +11,7 @@ export interface TeamsDetailsView {
   participants: string
   robots: string
 }
+
 export type TeamsDetailsRow = Selectable<TeamsDetailsView>
 
 export interface CompetitionTimesView {
@@ -21,6 +22,7 @@ export interface CompetitionTimesView {
   score: number
   stage: string
 }
+
 export type CompetitionTimesRow = Selectable<CompetitionTimesView>
 
 export interface CompetitionTournamentBracketsView {
@@ -31,6 +33,7 @@ export interface CompetitionTournamentBracketsView {
   group_name: string
   stage: string
 }
+
 export type CompetitionTournamentBracketsRow = Selectable<CompetitionTournamentBracketsView>
 
 export interface CompetitionVotesView {
@@ -40,4 +43,13 @@ export interface CompetitionVotesView {
   year: number
   score: number
 }
+
 export type CompetitionVotesRow = Selectable<CompetitionVotesView>
+
+export interface CompetitionView {
+  name: string
+  scoring_method: string
+  color: string
+}
+
+export type CompetitionViewRow = Selectable<CompetitionView>
