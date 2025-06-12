@@ -53,3 +53,10 @@ export interface CompetitionView {
 }
 
 export type CompetitionViewRow = Selectable<CompetitionView>
+
+export interface CountriesView {
+  code: string
+  name: string
+}
+
+export type CountriesViewRow = Selectable<CountriesView>

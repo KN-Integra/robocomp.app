@@ -2,6 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 
 import type { CompetitionResponse } from '~/server/api/competition/index.get'
+import type { CountriesResponse } from '~/server/api/countries/index.get'
 
 interface Player {
   name: string
@@ -35,28 +36,7 @@ const players = ref<Player[]>([])
 const robots = ref<Robot[]>([])
 
 const categories = ref<string[]>([])
-const countries = ref<[string, string][]>([
-  ['Polska', 'PL'],
-  ['Niemcy', 'DE'],
-  ['Francja', 'FR'],
-  ['Hiszpania', 'ES'],
-  ['Włochy', 'IT'],
-  ['Stany Zjednoczone', 'US'],
-  ['Kanada', 'CA'],
-  ['Wielka Brytania', 'GB'],
-  ['Australia', 'AU'],
-  ['Nowa Zelandia', 'NZ'],
-  ['Japonia', 'JP'],
-  ['Indie', 'IN'],
-  ['Chiny', 'CN'],
-  ['Brazylia', 'BR'],
-  ['Argentyna', 'AR'],
-  ['Meksyk', 'MX'],
-  ['Norwegia', 'NO'],
-  ['Szwecja', 'SE'],
-  ['Finlandia', 'FI'],
-  ['Turcja', 'TR']
-])
+const countries = ref<[string, string][]>([])
 
 const agreePrivacy = ref(false)
 const agreeTerms = ref(false)
@@ -108,6 +88,14 @@ onMounted(async () => {
     const response = await fetch('api/competition')
     const data = (await response.json()) as CompetitionResponse
     categories.value = data.data.competitions.map((element) => element.name) || []
+  } catch (error) {
+    console.error('Error in loading robots categories:', error)
+  }
+
+  try {
+    const response = await fetch('api/countries')
+    const data = (await response.json()) as CountriesResponse
+    countries.value = data.data.countries.map((element) => [element.name, element.code]) || []
   } catch (error) {
     console.error('Error in loading robots categories:', error)
   }
