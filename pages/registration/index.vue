@@ -3,9 +3,11 @@ import { ref, reactive, onMounted } from 'vue'
 
 import type { CompetitionResponse } from '~/server/api/competition/index.get'
 import type { CountriesResponse } from '~/server/api/countries/index.get'
+import type { RegistrationRequest, RegistrationResponse } from '~/server/api/registration/index.post'
 
-interface Player {
+interface Participant {
   name: string
+  surname: string
   shirtSize: string
 }
 
@@ -15,13 +17,14 @@ interface Robot {
 }
 
 const shirtSizes = ['S', 'M', 'L', 'XL', 'XXL']
-const maxPlayers = 10
+const maxParticipants = 10
 const maxRobots = 5
 
 const teamName = ref('')
 
 const captain = reactive({
   name: '',
+  surname: '',
   shirtSize: '',
   email: '',
   phone: '',
@@ -31,7 +34,7 @@ const captain = reactive({
   country: ''
 })
 
-const players = ref<Player[]>([])
+const participants = ref<Participant[]>([])
 
 const robots = ref<Robot[]>([])
 
@@ -41,14 +44,14 @@ const countries = ref<[string, string][]>([])
 const agreePrivacy = ref(false)
 const agreeTerms = ref(false)
 
-function addPlayer() {
-  if (players.value.length + 1 < maxPlayers) {
-    players.value.push({ name: '', shirtSize: '' })
+function addParticipant() {
+  if (participants.value.length + 1 < maxParticipants) {
+    participants.value.push({ name: '', surname: '', shirtSize: '' })
   }
 }
 
-function removePlayer(index: number) {
-  players.value.splice(index, 1)
+function removeParticipant(index: number) {
+  participants.value.splice(index, 1)
 }
 
 function addRobot() {
@@ -61,25 +64,39 @@ function removeRobot(index: number) {
   robots.value.splice(index, 1)
 }
 
-function submitForm() {
+async function submitForm() {
   if (!agreePrivacy.value || !agreeTerms.value) {
     alert('Musisz zaakceptować zgodę i regulamin.')
     return
   }
 
-  const fullTeam = [captain, ...players.value]
-
-  if (fullTeam.length !== maxPlayers) {
-    alert(`Zespół musi mieć dokładnie ${maxPlayers} zawodników (w tym kapitana).`)
+  if (robots.value.length === 0) {
+    alert('Zespół musi zgłosić przynajmniej 1 robota')
     return
   }
-
-  console.log({
+  const payload: RegistrationRequest = {
     teamName: teamName.value,
     captain,
-    players: players.value,
-    robots: robots.value
-  })
+    participants: participants.value,
+    robots: robots.value,
+    agreePrivacy: agreePrivacy.value,
+    agreeTerms: agreeTerms.value
+  }
+  try {
+    const res = await fetch('/api/registration', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+
+    const data: RegistrationResponse = await res.json()
+    alert(`Rejestracja zakończona sukcesem! ${JSON.stringify(data)}`)
+  } catch (error) {
+    console.error('Błąd przy rejestracji:', error)
+    alert('Wystąpił błąd przy wysyłaniu formularza.')
+  }
 }
 
 // Fetch categories from API on mount
@@ -113,12 +130,8 @@ onMounted(async () => {
 
     <div class="mb-6">
       <h2 class="font-semibold mb-2">Kapitan</h2>
-      <input
-        v-model="captain.name"
-        type="text"
-        placeholder="Imię i nazwisko"
-        class="input input-bordered w-full mb-2"
-      />
+      <input v-model="captain.name" type="text" placeholder="Imię" class="input input-bordered w-full mb-2" />
+      <input v-model="captain.surname" type="text" placeholder="Nazwisko" class="input input-bordered w-full mb-2" />
       <select v-model="captain.shirtSize" class="select select-bordered w-full mb-2">
         <option disabled value="">Rozmiar koszulki</option>
         <option v-for="size in shirtSizes" :key="size" :value="size">{{ size }}</option>
@@ -144,16 +157,21 @@ onMounted(async () => {
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2">Zawodnicy ({{ players.length }} z 9 możliwych)</h2>
-      <div v-for="(player, i) in players" :key="i" class="flex gap-2 mb-2">
-        <input v-model="player.name" type="text" placeholder="Imię i nazwisko" class="input input-bordered flex-1" />
-        <select v-model="player.shirtSize" class="select select-bordered w-32">
+      <h2 class="font-semibold mb-2">Zawodnicy ({{ participants.length }} z 9 możliwych)</h2>
+      <div v-for="(participant, i) in participants" :key="i" class="flex gap-2 mb-2">
+        <input v-model="participant.name" type="text" placeholder="Imię" class="input input-bordered flex-1" />
+        <input v-model="participant.surname" type="text" placeholder="Nazwisko" class="input input-bordered flex-1" />
+        <select v-model="participant.shirtSize" class="select select-bordered w-32">
           <option disabled value="">Rozmiar</option>
           <option v-for="size in shirtSizes" :key="size" :value="size">{{ size }}</option>
         </select>
-        <button class="btn btn-sm btn-error" @click="removePlayer(i)">Usuń</button>
+        <button class="btn btn-sm btn-error" @click="removeParticipant(i)">Usuń</button>
       </div>
-      <button class="btn btn-sm btn-primary mt-2" :disabled="players.length + 1 >= maxPlayers" @click="addPlayer">
+      <button
+        class="btn btn-sm btn-primary mt-2"
+        :disabled="participants.length + 1 >= maxParticipants"
+        @click="addParticipant"
+      >
         Dodaj zawodnika
       </button>
     </div>
