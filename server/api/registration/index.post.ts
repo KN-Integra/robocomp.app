@@ -138,7 +138,6 @@ function checkRobotsData(robots: Robot[]): boolean {
 async function add2Database(record: RegistrationRequest): Promise<RegistrationResponse> {
   const db = createKysely<Database>()
   try {
-    // Dodanie drużyny
     const team = await db
       .insertInto('robocomp.team' as any)
       .values({ name: record.teamName })
@@ -147,16 +146,18 @@ async function add2Database(record: RegistrationRequest): Promise<RegistrationRe
 
     const teamId = team.id
 
-    // Dodanie kapitana
     const captainParticipant = await db
       .insertInto('robocomp.participant' as any)
-      .values({ first_name: record.captain.name, last_name: record.captain.surname, size: record.captain.shirtSize })
+      .values({
+        first_name: record.captain.name,
+        last_name: record.captain.surname,
+        size: record.captain.shirtSize
+      })
       .returning('id')
       .executeTakeFirstOrThrow()
 
     const captainId = captainParticipant.id
 
-    // Adres kapitana
     await db
       .insertInto('robocomp.participant_address' as any)
       .values({
@@ -170,13 +171,11 @@ async function add2Database(record: RegistrationRequest): Promise<RegistrationRe
       })
       .execute()
 
-    // Dodanie kapitana do drużyny
     await db
       .insertInto('robocomp.team_participant' as any)
       .values({ team_id: teamId, participant_id: captainId, role: 'leader' })
       .execute()
 
-    // Dodanie pozostałych uczestników
     for (const participant of record.participants) {
       const par = await db
         .insertInto('robocomp.participant' as any)
@@ -190,7 +189,6 @@ async function add2Database(record: RegistrationRequest): Promise<RegistrationRe
         .execute()
     }
 
-    // Dodanie robotów
     for (const robot of record.robots) {
       await db
         .insertInto('robocomp.robot' as any)
