@@ -1,5 +1,7 @@
 import { createKysely } from '@vercel/postgres-kysely'
 
+import { isValidEmail, isValidPhone, isValidPostalCode } from '~/server/utils/formValidator'
+
 import type { Database } from '~/types/db/Database'
 
 export enum RegistrationStatus {
@@ -67,13 +69,11 @@ function checkCaptainData(captain: Captain): boolean {
     return false
   }
 
-  if (!(captain.email && captain.email.length > 0 && captain.email.length <= 50)) {
-    // TODO: CHECK IF MAIL IS CORRECT
+  if (!(captain.email && captain.email.length > 0 && captain.email.length <= 50 && isValidEmail(captain.email))) {
     return false
   }
 
-  if (!(captain.phone && captain.phone.length > 0 && captain.phone.length <= 50)) {
-    // TODO: CHECK IF PHONE IS CORRECT
+  if (!(captain.phone && captain.phone.length > 0 && captain.phone.length <= 50 && isValidPhone(captain.phone))) {
     return false
   }
 
@@ -81,8 +81,7 @@ function checkCaptainData(captain: Captain): boolean {
     return false
   }
 
-  if (!(captain.postalCode && captain.postalCode.length === 6)) {
-    // TODO: CHECK IF POSTAL CODE IS CORRECT
+  if (!(captain.postalCode && captain.postalCode.length === 6 && isValidPostalCode(captain.postalCode))) {
     return false
   }
 
@@ -94,7 +93,7 @@ function checkCaptainData(captain: Captain): boolean {
 }
 
 function checkParticipantsData(participants: Participant[]): boolean {
-  if (!(participants && participants.length > 0 && participants.length <= 9)) {
+  if (!(participants && participants.length >= 0 && participants.length <= 9)) {
     return false
   }
   for (const participant of participants) {
@@ -136,6 +135,7 @@ function checkRobotsData(robots: Robot[]): boolean {
 }
 
 async function add2Database(record: RegistrationRequest): Promise<RegistrationResponse> {
+  // TODO: ZMIENIĆ NA TRANSAKCJE WRAZ Z ZMIANA BIBLIOTEKI
   const db = createKysely<Database>()
   try {
     const team = await db
@@ -235,6 +235,5 @@ export default defineEventHandler(async (event): Promise<RegistrationResponse> =
       statusCode: RegistrationStatus.MissingConsent
     }
   }
-  console.log(body)
   return await add2Database(body)
 })
