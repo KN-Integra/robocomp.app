@@ -1,11 +1,15 @@
 export function isValidEmail(email: string): boolean {
-  return email.length > 0
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
 }
 
 export function isValidPhone(phone: string): boolean {
-  return phone.length > 0
+  const phoneRegex = /^[0-9]{9}$|^\+?[0-9]{10,15}$/
+  return phoneRegex.test(phone)
 }
 
 export function isValidPostalCode(postalCode: string): boolean {
-  return postalCode.length > 0
+  // TODO: SPRAWDZIĆ CZY CZASAMI NIE TRZEBA TO USUNĄĆ BO RÓŻNE KRAJE RÓŻNY KOD POCZTOWY?
+  const postalCodeRegex = /^[0-9]{2}-[0-9]{3}$/
+  return postalCodeRegex.test(postalCode)
 }

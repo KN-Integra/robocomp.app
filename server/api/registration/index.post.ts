@@ -195,7 +195,12 @@ async function add2Database(record: RegistrationRequest): Promise<RegistrationRe
     for (const robot of record.robots) {
       await db
         .insertInto('robocomp.robot' as any)
-        .values({ name: robot.name, robot_no: 0, team_id: teamId, competition: robot.category })
+        .values({
+          name: robot.name,
+          robot_no: 1000 + teamId + Math.floor(Math.random() * 1000),
+          team_id: teamId,
+          competition: robot.category
+        })
         .execute()
     }
 

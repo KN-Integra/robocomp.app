@@ -37,7 +37,7 @@ export async function teamRegistrationConfirmationMail(mailer: Transporter, to: 
 
   try {
     await mailer.sendMail({
-      from: `"Robocomp" <${process.env.MAIL_FROM || ''}>`,
+      from: `"${process.env.NAME_FROM || ''}" <${process.env.MAIL_FROM || ''}>`,
       to,
       subject: `Potwierdzenie rejestracji drużyny – ${teamName}`,
       html: htmlContent

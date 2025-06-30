@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 
 import InputWithError from '~/components/forms/input-with-error.vue'
-import { isValidEmail, isValidPhone } from '~/server/utils/formValidator'
+import { isValidEmail, isValidPhone, isValidPostalCode } from '~/server/utils/formValidator'
 
 import type { CompetitionResponse } from '~/server/api/competition/index.get'
 import type { CountriesResponse } from '~/server/api/countries/index.get'
@@ -214,10 +214,10 @@ watch(captain, (newVal) => {
   }
 
   if (newVal.postalCode.length === 0) {
-    captainPostalCodeError.value = 'Podaj ulicę.'
+    captainPostalCodeError.value = 'Podaj kod pocztowy.'
     ok = false
   }
-  if (!isValidPhone(newVal.postalCode)) {
+  if (!isValidPostalCode(newVal.postalCode)) {
     captainPostalCodeError.value = 'Nie poprawny format kodu pocztowego'
     ok = false
   }
@@ -327,7 +327,6 @@ function removeRobot(index: number) {
 }
 
 async function submitForm() {
-
   const payload: RegistrationRequest = {
     teamName: teamName.value,
     captain,
@@ -351,7 +350,7 @@ async function submitForm() {
       state: {
         success: data.statusCode === 0,
         teamName: teamName.value,
-        email: captain.email.valu
+        email: captain.email
       }
     })
   } catch (error) {
@@ -520,6 +519,6 @@ onMounted(async () => {
       <label>Akceptuję regulamin zawodów</label>
     </div>
 
-    <button class="btn btn-success w-full" @click="submitForm">Zarejestruj zespół</button>
+    <button class="btn btn-success w-full" :disabled="!formOK" @click="submitForm">Zarejestruj zespół</button>
   </div>
 </template>
