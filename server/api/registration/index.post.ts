@@ -1,6 +1,9 @@
 import { createKysely } from '@vercel/postgres-kysely'
 
+import { teamRegistrationConfirmationMail } from '~/server/mail_structure/teamRegistrationConfirmationMail'
+import { teamRegistrationInformationMail } from '~/server/mail_structure/teamRegistrationInformationMail'
 import { isValidEmail, isValidPhone, isValidPostalCode } from '~/server/utils/formValidator'
+import { getMailTransporter } from '~/server/utils/mailer'
 
 import type { Database } from '~/types/db/Database'
 
@@ -235,5 +238,18 @@ export default defineEventHandler(async (event): Promise<RegistrationResponse> =
       statusCode: RegistrationStatus.MissingConsent
     }
   }
-  return await add2Database(body)
+
+  const response = await add2Database(body)
+  if (response.statusCode !== RegistrationStatus.CorrectAdding) {
+    return response
+  }
+  try {
+    const mailer = getMailTransporter()
+    await teamRegistrationConfirmationMail(mailer, body.captain.email, body)
+    await teamRegistrationInformationMail(mailer, process.env.REGISTRATION_MAIL || '', body)
+    return response
+  } catch (error) {
+    console.error(error)
+    return { statusCode: RegistrationStatus.DatabaseFail }
+  }
 })

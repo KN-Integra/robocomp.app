@@ -327,15 +327,7 @@ function removeRobot(index: number) {
 }
 
 async function submitForm() {
-  if (!agreePrivacy.value || !agreeTerms.value) {
-    alert('Musisz zaakceptować zgodę i regulamin.')
-    return
-  }
 
-  if (robots.value.length === 0) {
-    alert('Zespół musi zgłosić przynajmniej 1 robota')
-    return
-  }
   const payload: RegistrationRequest = {
     teamName: teamName.value,
     captain,
@@ -528,6 +520,6 @@ onMounted(async () => {
       <label>Akceptuję regulamin zawodów</label>
     </div>
 
-    <button class="btn btn-success w-full" :disabled="!formOK" @click="submitForm">Zarejestruj zespół</button>
+    <button class="btn btn-success w-full" @click="submitForm">Zarejestruj zespół</button>
   </div>
 </template>
