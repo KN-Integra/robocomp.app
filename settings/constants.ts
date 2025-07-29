@@ -7,10 +7,15 @@ export enum Competition {
   'sumo-mini' = 'Mini Sumo',
   'sumo-micro' = 'Micro Sumo',
   'sumo-lego' = 'LEGO Sumo',
+  'sumo-lego-mini' = 'LEGO Sumo Mini',
   'smashbot-mini' = 'Mini Smash Bots',
-  'freestyle' = 'Freestyle',
-  'linefollower-standard' = 'TME Line Follower Standard',
+  'freestyle' = 'DPS Software Freestyle',
+  'TME linefollower-standard' = 'Line Follower Standard',
   'linefollower-enhanced' = 'Line Follower Enhanced',
+  'linefollower-light' = 'Line Follower Light',
+  'linefollower-lego' = 'LEGO Line Follower',
   'micromouse' = 'Micromouse',
-  'robosprint' = 'MAB Robotics Robosprint'
+  'robosprint' = 'Robosprint',
+  'delivery-boy' = 'AGH Drone Engineering Delivery Boy',
+  'radio-silent' = 'AGH Drone Engineering Cisza Radiowa'
 }
