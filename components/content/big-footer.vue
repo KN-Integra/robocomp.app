@@ -9,7 +9,7 @@ interface IPartner {
   logo: string
   url: string
   internalName: string
-  type: 'gold' | 'silver' | 'bronze' | 'media' | 'support' | 'honorary' | 'medical'
+  type: 'gold' | 'silver' | 'bronze' | 'media' | 'support' | 'honorary' | 'medical' | 'cultural'
 }
 
 const $route = useRoute()
@@ -24,6 +24,7 @@ enum TypeToDisplay {
   medical = 'Opieka Medyczna',
   media = 'Patroni Medialni',
   honorary = 'Patronat Honorowy',
+  cultural = 'Patronat Kulturalny',
   support = 'Wsparcie Wydarzenia'
 }
 
@@ -38,6 +39,7 @@ const { status, data: partners } = useAsyncData<Record<string, IPartner[]>>('par
       medical: [],
       media: [],
       honorary: [],
+      cultural: [],
       support: []
     }
   }
@@ -51,6 +53,7 @@ const { status, data: partners } = useAsyncData<Record<string, IPartner[]>>('par
     medical: partnerData.filter((partner) => partner.type === 'medical'),
     media: partnerData.filter((partner) => partner.type === 'media'),
     honorary: partnerData.filter((partner) => partner.type === 'honorary'),
+    cultural: partnerData.filter((partner) => partner.type === 'cultural'),
     support: partnerData.filter((partner) => partner.type === 'support')
   }
 

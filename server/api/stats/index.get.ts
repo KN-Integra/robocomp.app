@@ -79,13 +79,6 @@ export default defineEventHandler(async (event): Promise<StatsResponse | NuxtErr
 
   const results: StatsResults = {}
 
-  console.info({
-    user: runtimeConfig.POSTGRES_USER,
-    password: runtimeConfig.POSTGRES_PASSWORD,
-    host: runtimeConfig.POSTGRES_HOST,
-    database: runtimeConfig.POSTGRES_DATABASE
-  })
-
   const pool = new Pool({
     user: runtimeConfig.POSTGRES_USER,
     password: runtimeConfig.POSTGRES_PASSWORD,
