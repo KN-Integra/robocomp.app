@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-
-import InputWithError from '~/components/forms/input-with-error.vue'
-import { isValidEmail, isValidPhone, isValidPostalCode } from '~/server/utils/formValidator'
+import { FwbButton } from 'flowbite-vue'
 
 import type { CompetitionResponse } from '~/server/api/competition/index.get'
 import type { CountriesResponse } from '~/server/api/countries/index.get'
 import type { IsExistTeamResponse } from '~/server/api/isExistTeam/index.get'
 import type { RegistrationRequest, RegistrationResponse } from '~/server/api/registration/index.post'
+
+import { isValidEmail, isValidPhone, isValidPostalCode } from '~/server/utils/formValidator'
 
 const route = useRouter()
 
@@ -519,6 +518,6 @@ onMounted(async () => {
       <label>Akceptuję regulamin zawodów</label>
     </div>
 
-    <button class="btn btn-success w-full" :disabled="!formOK" @click="submitForm">Zarejestruj zespół</button>
+    <fwb-button class="btn btn-success w-full" :disabled="!formOK" @click="submitForm"> Zarejestruj zespół </fwb-button>
   </div>
 </template>

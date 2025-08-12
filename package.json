@@ -31,12 +31,11 @@
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/vue-fontawesome": "^3.0.2",
     "@neondatabase/serverless": "^1.0.0",
-    "@nextcloud/browserslist-config": "^3.0.1",
     "@nuxt/content": "^2.9.0",
     "@nuxtjs/color-mode": "^3.2.0",
     "@nuxtjs/robots": "^5.2.3",
     "@nuxtjs/web-vitals": "^0.2.7",
-    "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
+    "pinia-plugin-persistedstate": "^4.5.0",
     "@pinia/nuxt": "^0.5.5",
     "@tailwindcss/typography": "^0.5.9",
     "@types/ws": "^8.18.1",
@@ -118,10 +117,5 @@
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "vue-jest": "^5.0.0-alpha.10"
-  },
-  "resolutions": {
-    "string-width": "4.2.3",
-    "wrap-ansi": "7.0.0"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }

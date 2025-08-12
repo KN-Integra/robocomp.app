@@ -232,7 +232,7 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
     '@nuxt/image',
     '@vite-pwa/nuxt',
     '@nuxtjs/tailwindcss'
@@ -269,5 +269,9 @@ export default defineNuxtConfig({
     }
   },
 
-  compatibilityDate: '2025-04-09'
+  compatibilityDate: '2025-04-09',
+
+  devtools: {
+    enabled: true
+  }
 })
