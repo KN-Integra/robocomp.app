@@ -10,7 +10,9 @@ import {
   faFloppyDisk,
   faCheckSquare,
   faChevronLeft,
-  faChevronRight
+  faChevronRight,
+  faPlus,
+  faTrashAlt
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -31,7 +33,9 @@ library.add(
   faFloppyDisk,
   faCheckSquare,
   faChevronLeft,
-  faChevronRight
+  faChevronRight,
+  faPlus,
+  faTrashAlt
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

@@ -973,15 +973,15 @@
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.27.1"
 
-"@babylonjs/core@^7.37.0":
-  version "7.54.3"
-  resolved "https://registry.yarnpkg.com/@babylonjs/core/-/core-7.54.3.tgz#80ed977fbbd8c2574b5bd2c15bd102709bb3b918"
-  integrity sha512-P5ncXVd8GEUJLhwloP9V0oVwQYIrvZztguVeLlvd5Rx+9aQnenKjpV8auJ6SRsUlAmNZU4pFTKzwF6o2EUfhAw==
+"@babylonjs/core@8.22.2":
+  version "8.22.2"
+  resolved "https://registry.yarnpkg.com/@babylonjs/core/-/core-8.22.2.tgz#ff0a6c19e4ac84665d2ff0a8c51db174fe918ce0"
+  integrity sha512-XTXEQuZueAlcRLjFFywWkdP2UFoyckH9sInmrso9Rq4szj/S8Q9Y8PdlLDOkuRg1il2xsHqAdEC26D6miR9U6w==
 
-"@babylonjs/loaders@^7.37.0":
-  version "7.54.3"
-  resolved "https://registry.yarnpkg.com/@babylonjs/loaders/-/loaders-7.54.3.tgz#333ac287171ec6384cbc44e1481a0298187c4e31"
-  integrity sha512-RBPmOsaMTxi6Ga08ueLTm6Tnvx/l2nNQigucubvrngZ7muwn5/ubfcStckkI1c0qvhR1+/FFlD54do7gZ1pnsQ==
+"@babylonjs/loaders@8.22.2":
+  version "8.22.2"
+  resolved "https://registry.yarnpkg.com/@babylonjs/loaders/-/loaders-8.22.2.tgz#f105252ec0f052819f1710d80e9543de4f8588fd"
+  integrity sha512-wNN92JE0aXuGED5/LY71pFEJWjy2IVO6FaMLCNi9y1YtpniHFVk7n5y6qp5KpuLjJCwIdTRbjihyEdj2rFWgfw==
 
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
@@ -1415,15 +1415,22 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.10.tgz#a2a1e3812d14525f725d011a73eceb41fef5bc1c"
   integrity sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==
 
-"@fortawesome/fontawesome-common-types@6.7.2":
-  version "6.7.2"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.7.2.tgz#7123d74b0c1e726794aed1184795dbce12186470"
-  integrity sha512-Zs+YeHUC5fkt7Mg1l6XTniei3k4bwG/yo3iFUtZWd/pMx9g3fdvkSK9E0FOC+++phXOka78uJcYb8JaFkW52Xg==
+"@fortawesome/fontawesome-common-types@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-7.0.0.tgz#1a03eb151263bffcc9c4d0b0b0ffef04496e4382"
+  integrity sha512-PGMrIYXLGA5K8RWy8zwBkd4vFi4z7ubxtet6Yn13Plf6krRTwPbdlCwlcfmoX0R7B4Z643QvrtHmdQ5fNtfFCg==
 
 "@fortawesome/fontawesome-common-types@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.3.0.tgz#949995a05c0d8801be7e0a594f775f1dbaa0d893"
   integrity sha512-CA3MAZBTxVsF6SkfkHXDerkhcQs0QPofy43eFdbWJJkZiq3SfiaH1msOkac59rQaqto5EqWnASboY1dBuKen5w==
+
+"@fortawesome/fontawesome-svg-core@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-7.0.0.tgz#57c0c6105a84cacd62d06e61d1b259f5dade560b"
+  integrity sha512-obBEF+zd98r/KtKVW6A+8UGWeaOoyMpl6Q9P3FzHsOnsg742aXsl8v+H/zp09qSSu/a/Hxe9LNKzbBaQq1CEbA==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "7.0.0"
 
 "@fortawesome/fontawesome-svg-core@^1.2.27":
   version "1.3.0"
@@ -1432,43 +1439,36 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.3.0"
 
-"@fortawesome/fontawesome-svg-core@^6.2.1":
-  version "6.7.2"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-6.7.2.tgz#0ac6013724d5cc327c1eb81335b91300a4fce2f2"
-  integrity sha512-yxtOBWDrdi5DD5o1pmVdq3WMCvnobT0LU6R8RyyVXPvFRd2o79/0NCuQoCjNTeZz9EzA9xS3JxNWfv54RIHFEA==
+"@fortawesome/free-brands-svg-icons@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-7.0.0.tgz#2510ed99f4406bb8e6459316a7d9b2432fa41b55"
+  integrity sha512-C8oY28gq/Qx/cHReJa2AunKJUHvUZDVoPlSTHtAvjriaNfi+5nugW4cx7yA/xN3f/nYkElw11gFBoJ2xUDDFgg==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "6.7.2"
+    "@fortawesome/fontawesome-common-types" "7.0.0"
 
-"@fortawesome/free-brands-svg-icons@^6.2.1":
-  version "6.7.2"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-6.7.2.tgz#4ebee8098f31da5446dda81edc344025eb59b27e"
-  integrity sha512-zu0evbcRTgjKfrr77/2XX+bU+kuGfjm0LbajJHVIgBWNIDzrhpRxiCPNT8DW5AdmSsq7Mcf9D1bH0aSeSUSM+Q==
+"@fortawesome/free-regular-svg-icons@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-7.0.0.tgz#4814a9e18156c734faed2922e9ba9544492ed4e1"
+  integrity sha512-qAh0mTaCY22sQzMK2lKBrtn/aR4keUu5XmtdYR7d702laMe0h+Ab4Kj2pExR9HZkKhjKoq8pbwt8Td+mjW/ipQ==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "6.7.2"
+    "@fortawesome/fontawesome-common-types" "7.0.0"
 
-"@fortawesome/free-regular-svg-icons@^6.2.1":
-  version "6.7.2"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-6.7.2.tgz#f1651e55e6651a15589b0569516208f9c65f96db"
-  integrity sha512-7Z/ur0gvCMW8G93dXIQOkQqHo2M5HLhYrRVC0//fakJXxcF1VmMPsxnG6Ee8qEylA8b8Q3peQXWMNZ62lYF28g==
+"@fortawesome/free-solid-svg-icons@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-7.0.0.tgz#26362f9f97e33fc3739752af584a015d8a365850"
+  integrity sha512-njSLAllkOddYDCXgTFboXn54Oe5FcvpkWq+FoetOHR64PbN0608kM02Lze0xtISGpXgP+i26VyXRQA0Irh3Obw==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "6.7.2"
+    "@fortawesome/fontawesome-common-types" "7.0.0"
 
-"@fortawesome/free-solid-svg-icons@^6.2.1":
-  version "6.7.2"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.7.2.tgz#fe25883b5eb8464a82918599950d283c465b57f6"
-  integrity sha512-GsBrnOzU8uj0LECDfD5zomZJIjrPhIlWU82AHwa2s40FKH+kcxQaBvBo3Z4TxyZHIyX8XTDxsyA33/Vx9eFuQA==
-  dependencies:
-    "@fortawesome/fontawesome-common-types" "6.7.2"
+"@fortawesome/vue-fontawesome@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/vue-fontawesome/-/vue-fontawesome-3.1.1.tgz#15212b003928f7a37a64ce1f3b7d02b2a2701af5"
+  integrity sha512-U5azn4mcUVpjHe4JO0Wbe7Ih8e3VbN83EH7OTBtA5/QGw9qcPGffqcmwsLyZYgEkpVkYbq/6dX1Iyl5KUGMp6Q==
 
 "@fortawesome/vue-fontawesome@^0.1.9":
   version "0.1.10"
   resolved "https://registry.yarnpkg.com/@fortawesome/vue-fontawesome/-/vue-fontawesome-0.1.10.tgz#eeeec1e4e8850bed0468f938292b06cda793bf34"
   integrity sha512-b2+SLF31h32LSepVcXe+BQ63yvbq5qmTCy4KfFogCYm2bn68H5sDWUnX+U7MBqnM2aeEk9M7xSoqGnu+wSdY6w==
-
-"@fortawesome/vue-fontawesome@^3.0.2":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@fortawesome/vue-fontawesome/-/vue-fontawesome-3.1.1.tgz#15212b003928f7a37a64ce1f3b7d02b2a2701af5"
-  integrity sha512-U5azn4mcUVpjHe4JO0Wbe7Ih8e3VbN83EH7OTBtA5/QGw9qcPGffqcmwsLyZYgEkpVkYbq/6dX1Iyl5KUGMp6Q==
 
 "@hapi/hoek@^9.0.0", "@hapi/hoek@^9.3.0":
   version "9.3.0"
@@ -2101,20 +2101,20 @@
     "@emnapi/runtime" "^1.4.5"
     "@tybys/wasm-util" "^0.10.0"
 
-"@neondatabase/serverless@^0.9.3":
-  version "0.9.5"
-  resolved "https://registry.yarnpkg.com/@neondatabase/serverless/-/serverless-0.9.5.tgz#61f412e3cf6c39492a326cab784bfad216e6d089"
-  integrity sha512-siFas6gItqv6wD/pZnvdu34wEqgG3nSE6zWZdq5j2DEsa+VvX8i/5HXJOo06qrw5axPXn+lGCxeR+NLaSPIXug==
-  dependencies:
-    "@types/pg" "8.11.6"
-
-"@neondatabase/serverless@^1.0.0":
+"@neondatabase/serverless@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@neondatabase/serverless/-/serverless-1.0.1.tgz#d641bef253d44a262414adc9fe8e55c97c263c17"
   integrity sha512-O6yC5TT0jbw86VZVkmnzCZJB0hfxBl0JJz6f+3KHoZabjb/X08r9eFA+vuY06z1/qaovykvdkrXYq3SPUuvogA==
   dependencies:
     "@types/node" "^22.15.30"
     "@types/pg" "^8.8.0"
+
+"@neondatabase/serverless@^0.9.3":
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/@neondatabase/serverless/-/serverless-0.9.5.tgz#61f412e3cf6c39492a326cab784bfad216e6d089"
+  integrity sha512-siFas6gItqv6wD/pZnvdu34wEqgG3nSE6zWZdq5j2DEsa+VvX8i/5HXJOo06qrw5axPXn+lGCxeR+NLaSPIXug==
+  dependencies:
+    "@types/pg" "8.11.6"
 
 "@netlify/binary-info@^1.0.0":
   version "1.0.0"
@@ -2725,7 +2725,7 @@
     unwasm "^0.3.9"
     vfile "^6.0.3"
 
-"@nuxtjs/robots@^5.2.3":
+"@nuxtjs/robots@5.4.0":
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@nuxtjs/robots/-/robots-5.4.0.tgz#80bd7268e46efb16fc901e901feaf7ce8ed2c59b"
   integrity sha512-E+bzaVsRQRgyN1RjhUexaqVZDV3MLKHff2e3WYHPiXrUNnOQ/RverO3D0yrP7fH5HqOBG0nBV6X3gD/q3+kUEA==
@@ -3113,13 +3113,12 @@
     "@parcel/watcher-win32-ia32" "2.5.1"
     "@parcel/watcher-win32-x64" "2.5.1"
 
-"@pinia/nuxt@^0.5.5":
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/@pinia/nuxt/-/nuxt-0.5.5.tgz#0e156bbb86b3ccb087006ff505bc0c1b6522e8c3"
-  integrity sha512-wjxS7YqIesh4OLK+qE3ZjhdOJ5pYZQ+VlEmZNtTwzQn1Kavei/khovx7mzXVXNA/mvSPXVhb9xBzhyS3XMURtw==
+"@pinia/nuxt@0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@pinia/nuxt/-/nuxt-0.11.2.tgz#e9ea71d109c06c32cae0ee83bd4d081d3a3466f6"
+  integrity sha512-CgvSWpbktxxWBV7ModhAcsExsQZqpPq6vMYEe9DexmmY6959ev8ukL4iFhr/qov2Nb9cQAWd7niFDnaWkN+FHg==
   dependencies:
     "@nuxt/kit" "^3.9.0"
-    pinia "^2.2.3"
 
 "@pkgjs/parseargs@^0.11.0":
   version "0.11.0"
@@ -4118,7 +4117,7 @@
     anymatch "^3.0.0"
     source-map "^0.6.0"
 
-"@types/ws@^8.18.1":
+"@types/ws@8.18.1":
   version "8.18.1"
   resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.18.1.tgz#48464e4bf2ddfd17db13d845467f6070ffea4aa9"
   integrity sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==
@@ -4542,7 +4541,7 @@
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.11.1.tgz#538b1e103bf8d9864e7b85cc96fa8d6fb6c40777"
   integrity sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==
 
-"@vercel/analytics@^1.2.2":
+"@vercel/analytics@1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@vercel/analytics/-/analytics-1.5.0.tgz#073f93694897414b21a8495e2619bbf64447dcaa"
   integrity sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g==
@@ -4565,7 +4564,7 @@
     picomatch "^4.0.2"
     resolve-from "^5.0.0"
 
-"@vercel/postgres-kysely@^0.10.0":
+"@vercel/postgres-kysely@0.10.0":
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/@vercel/postgres-kysely/-/postgres-kysely-0.10.0.tgz#149247e603dc01fc8536b1da190b97d05c49b78e"
   integrity sha512-X1kjLBvjLzE2gdWYSAxFWiRj9SxLYQWZFqIhzNVGG1VqJ8ROxoGiYhPPJrmIC+XACwDuK4SVB0EbFTEcaeO/pQ==
@@ -4581,7 +4580,7 @@
     bufferutil "^4.0.8"
     ws "^8.17.1"
 
-"@vercel/speed-insights@^1.0.12":
+"@vercel/speed-insights@1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@vercel/speed-insights/-/speed-insights-1.2.0.tgz#1656c3596d4ec02d93d301ca45944c1b9b245186"
   integrity sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw==
@@ -9112,7 +9111,7 @@ gzip-size@^7.0.0:
   dependencies:
     duplexer "^0.1.2"
 
-h3@^1.10.0, h3@^1.12.0, h3@^1.15.1, h3@^1.15.3, h3@^1.15.4, h3@^1.9.0:
+h3@1.15.4, h3@^1.10.0, h3@^1.12.0, h3@^1.15.1, h3@^1.15.3, h3@^1.15.4:
   version "1.15.4"
   resolved "https://registry.yarnpkg.com/h3/-/h3-1.15.4.tgz#022ab3563bbaf2108c25375c40460f3e54a5fe02"
   integrity sha512-z5cFQWDffyOe4vQ9xIqNfCZdV4p//vy6fBnr8Q1AWnVZ0teurKMG66rLj++TKwKPUP3u7iMUvrvKaEUiQw2QWQ==
@@ -11031,10 +11030,10 @@ joi@^17.4.0:
     "@sideway/formula" "^3.0.1"
     "@sideway/pinpoint" "^2.0.0"
 
-jose@^5.9.2:
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/jose/-/jose-5.10.0.tgz#c37346a099d6467c401351a9a0c2161e0f52c4be"
-  integrity sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==
+jose@6.0.12:
+  version "6.0.12"
+  resolved "https://registry.yarnpkg.com/jose/-/jose-6.0.12.tgz#56253d94d46bd784addc4bde3691c323552fe7e4"
+  integrity sha512-T8xypXs8CpmiIi78k0E+Lk7T2zlK4zDyg+o1CZ4AkOHgDg98ogdP2BeZ61lTFKFyoEwJ9RgAgN+SdM3iPgNonQ==
 
 js-beautify@^1.14.9, js-beautify@^1.6.12:
   version "1.15.4"
@@ -11057,7 +11056,7 @@ js-message@1.0.7:
   resolved "https://registry.yarnpkg.com/js-message/-/js-message-1.0.7.tgz#fbddd053c7a47021871bb8b2c95397cc17c20e47"
   integrity sha512-efJLHhLjIyKRewNS9EGZ4UpI8NguuL6fKkhRxVuMmrGV2xN/0APGdQYwLFky5w9naebSZ0OwAGp0G6/2Cg90rA==
 
-js-quantities@^1.8.0:
+js-quantities@1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/js-quantities/-/js-quantities-1.8.0.tgz#32d8c447796574c1ab359d5bba64ab9c7575a7fc"
   integrity sha512-swDw9RJpXACAWR16vAKoSojAsP6NI7cZjjnjKqhOyZSdybRUdmPr071foD3fejUKSU2JMHz99hflWkRWvfLTpQ==
@@ -13806,7 +13805,7 @@ pinia-plugin-persistedstate@^4.5.0:
     defu "^6.1.4"
     destr "^2.0.5"
 
-pinia@^2.1.7, pinia@^2.2.3:
+pinia@^2.1.7:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/pinia/-/pinia-2.3.1.tgz#54c476675b72f5abcfafa24a7582531ea8c23d94"
   integrity sha512-khUlZSwt9xXCaTbbxFYBKDc/bWAGWJjOgvxETwkTN7KRm66EeT1ZdZj6i2ceh9sP2Pzqsbc704r2yngBrxBVug==

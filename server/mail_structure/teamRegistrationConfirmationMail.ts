@@ -27,7 +27,7 @@ export async function teamRegistrationConfirmationMail(mailer: Transporter, to: 
       </ul>
       <h2>Zgłoszone roboty</h2>
       <ul>
-        ${robots.map((robot) => `<li>${robot.name} ,Kategoria : ${robot.category}</li>`).join('')}
+        ${robots.map((robot) => `<li>${robot.name}, Kategoria : ${robot.category}</li>`).join('')}
       </ul>
       <p>Wkrótce otrzymasz kolejne informacje organizacyjne na ten adres e-mail.</p>
       <br/>

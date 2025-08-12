@@ -15,7 +15,6 @@ export default defineEventHandler(async (event): Promise<IsExistTeamResponse | H
   const query = getQuery(event)
 
   const name = query.name
-  console.error(name)
   if (!name || typeof name !== 'string') {
     throw createError({
       statusCode: 400,

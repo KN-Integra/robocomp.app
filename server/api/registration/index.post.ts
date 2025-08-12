@@ -197,6 +197,7 @@ async function add2Database(record: RegistrationRequest): Promise<RegistrationRe
         .insertInto('robocomp.robot' as any)
         .values({
           name: robot.name,
+          // TODO: use stored function/default column value
           robot_no: 1000 + teamId + Math.floor(Math.random() * 1000),
           team_id: teamId,
           competition: robot.category
