@@ -363,6 +363,11 @@ async function submitForm() {
   for (const el of $formRef.value.elements) {
     const element = el as HTMLFormElement
 
+    const [key, idx] = element.name.split('-').map(([k, i]) => [k, Number(i)]) as unknown as [
+      keyof typeof validations,
+      number
+    ]
+
     if (![...formData.keys()].includes(element.name)) {
       continue
     }
@@ -372,9 +377,16 @@ async function submitForm() {
     if (!element.checkValidity()) {
       console.debug(element.validity)
       element.focus()
-      element.setCustomValidity(validations.teamName.errorMessage)
-      validations.teamName.status.value = 'error'
-      validations.teamName.message.value = validations.teamName.errorMessage
+
+      if (Array.isArray(validations[key])) {
+        element.setCustomValidity(validations[key][idx].errorMessage)
+        validations[key][idx].status.value = 'error'
+        validations[key][idx].message.value = element.validationMessage
+      } else {
+        element.setCustomValidity(validations[key].errorMessage)
+        validations[key].status.value = 'error'
+        validations[key].message.value = element.validationMessage
+      }
     }
   }
 
@@ -665,7 +677,7 @@ onMounted(async () => {
         <fwb-input
           v-model="participant.name"
           type="text"
-          name="participantFirstName[]"
+          :name="'participantFirstName-' + i"
           placeholder="Imię"
           :validation-status="validations.participantFirstName[i].status.value"
           :required="true"
@@ -686,7 +698,7 @@ onMounted(async () => {
         <fwb-input
           v-model="participant.surname"
           type="text"
-          name="participantLastName[]"
+          :name="'participantLastName-' + i"
           placeholder="Nazwisko"
           :validation-status="validations.participantLastName[i].status.value"
           :required="true"
@@ -704,7 +716,7 @@ onMounted(async () => {
 
         <fwb-select
           v-model="participant.shirtSize"
-          name="participantShirtSize[]"
+          :name="'participantShirtSize-' + i"
           :options="shirtSizes"
           :required="true"
         />
@@ -731,7 +743,7 @@ onMounted(async () => {
         <fwb-input
           v-model="robot.name"
           type="text"
-          name="robotName[]"
+          :name="'robotName-' + i"
           placeholder="Nazwa robota"
           :validation-status="validations.robotName[i].status.value"
           :required="true"
