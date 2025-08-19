@@ -811,14 +811,6 @@ onMounted(async () => {
           </template>
         </fwb-input>
 
-        <forms-input-with-error
-          v-model="robot.name"
-          type="text"
-          placeholder="Nazwa robota"
-          class="input input-bordered flex-1"
-          :error-message="robotsError.length > i ? robotsError[i].name : undefined"
-        />
-
         <fwb-select v-model="robot.category" name="robotCategories[]" :options="categories" :required="true" />
 
         <fwb-button color="red" @click="removeRobot(i)">Usuń</fwb-button>
