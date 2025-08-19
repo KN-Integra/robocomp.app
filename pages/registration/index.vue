@@ -36,7 +36,6 @@ const captain = reactive({
 })
 
 const participants = ref<Participant[]>([])
-
 const robots = ref<Robot[]>([])
 
 const categories = ref<{ name: string; value: string }[]>([])
@@ -46,7 +45,6 @@ const agreePrivacy = ref(false)
 const agreeTerms = ref(false)
 
 // ERROR
-const formOK = ref(false)
 const teamNameError = ref<string | undefined>('')
 const captainNameError = ref<string | undefined>('')
 const captainSurnameError = ref<string | undefined>('')
@@ -69,59 +67,6 @@ interface RobotsError {
 
 const robotsError = ref<RobotsError[]>([])
 
-function checkAllForm() {
-  if (
-    teamNameError.value !== undefined ||
-    captainNameError.value !== undefined ||
-    captainSurnameError.value !== undefined ||
-    captainEmailError.value !== undefined ||
-    captainPhoneError.value !== undefined ||
-    captainStreetError.value !== undefined ||
-    captainPostalCodeError.value !== undefined ||
-    captainCityError.value !== undefined
-  ) {
-    formOK.value = false
-    return
-  }
-
-  if (captain.shirtSize === '' || captain.country === '') {
-    formOK.value = false
-    return
-  }
-
-  if (
-    participantsError.value.find((value: ParticipantError) => {
-      return value.name !== undefined || value.surname !== undefined
-    }) !== undefined ||
-    participants.value.find((value: Participant) => {
-      return value.shirtSize === ''
-    }) !== undefined
-  ) {
-    formOK.value = false
-    return
-  }
-
-  if (
-    robots.value.length === 0 ||
-    robotsError.value.find((value: RobotsError) => {
-      return value.name !== undefined
-    }) !== undefined ||
-    robots.value.find((value: Robot) => {
-      return value.category === ''
-    }) !== undefined
-  ) {
-    formOK.value = false
-    return
-  }
-
-  if (!agreePrivacy.value || !agreeTerms.value) {
-    formOK.value = false
-    return
-  }
-
-  formOK.value = true
-}
-
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 watch(teamName, (newVal) => {
   teamNameError.value = ''
@@ -130,12 +75,10 @@ watch(teamName, (newVal) => {
   }
   if (newVal.length === 0) {
     teamNameError.value = 'Podaj nazwę drużyny.'
-    checkAllForm()
     return
   }
   if (newVal.length > 50) {
     teamNameError.value = 'Nazwa musi mieć długość mniejszą niż 50 liter.'
-    checkAllForm()
     return
   }
 
@@ -150,7 +93,6 @@ watch(teamName, (newVal) => {
     } catch (error) {
       teamNameError.value = 'Błąd połączenia z serwerem.'
     }
-    checkAllForm()
   }, 500)
 })
 
@@ -235,7 +177,6 @@ watch(captain, (newVal) => {
     captainPostalCodeError.value = undefined
     captainCityError.value = undefined
   }
-  checkAllForm()
 })
 
 watch(
@@ -260,7 +201,6 @@ watch(
       tempList.push(error)
     })
     participantsError.value = tempList
-    checkAllForm()
   }
 )
 
@@ -280,12 +220,8 @@ watch(
       tempList.push(error)
     })
     robotsError.value = tempList
-    checkAllForm()
   }
 )
-
-watch(agreePrivacy, () => checkAllForm())
-watch(agreeTerms, () => checkAllForm())
 
 async function checkTeamNameExist(name: string) {
   try {
