@@ -390,6 +390,8 @@ async function submitForm() {
   for (const el of $formRef.value.elements) {
     const element = el as HTMLFormElement
 
+    console.info(element, element.checkValidity())
+
     if (!element.checkValidity()) {
       element.focus()
       element.setCustomValidity(validations.teamName.errorMessage)
@@ -398,7 +400,7 @@ async function submitForm() {
     }
   }
 
-  if (!$formRef.value.checkValidity) {
+  if (!$formRef.value.checkValidity()) {
     return
   }
 
