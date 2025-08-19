@@ -390,10 +390,14 @@ async function submitForm() {
   for (const el of $formRef.value.elements) {
     const element = el as HTMLFormElement
 
+    if (![...formData.keys()].includes(element.name)) {
+      continue
+    }
+
     console.info(element, element.value, element.checkValidity())
 
     if (!element.checkValidity()) {
-      console.info(e.validity)
+      console.debug(element.validity)
       element.focus()
       element.setCustomValidity(validations.teamName.errorMessage)
       validations.teamName.status.value = 'error'
@@ -696,7 +700,7 @@ onMounted(async () => {
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2">
+      <h2 class="font-semibold mb-2 inline-flex items-center justify-between">
         <span>Roboty ({{ robots.length }} z 5 możliwych)</span>
 
         <fwb-button color="green" :disabled="robots.length >= maxRobots" @click="addRobot">
