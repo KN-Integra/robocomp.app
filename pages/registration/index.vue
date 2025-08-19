@@ -323,10 +323,7 @@ function removeRobot(index: number) {
 
 const $formRef = ref<HTMLFormElement>()
 
-const validations: Record<
-  string,
-  { status: Ref<'success' | 'error' | ''>; message: Ref<string | undefined>; errorMessage: string }
-> = {
+const validations = {
   teamName: {
     status: ref<'success' | 'error' | ''>(''),
     message: ref(),
@@ -366,14 +363,49 @@ const validations: Record<
     status: ref<'success' | 'error' | ''>(''),
     message: ref(),
     errorMessage: 'Podaj miasto kapitana'
+  },
+  participantFirstName: Array.from({ length: maxParticipants }, () => ({
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj imię zawodnika'
+  })),
+  participantLastName: Array.from({ length: maxParticipants }, () => ({
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj nazwisko zawodnika'
+  })),
+  agreePrivacy: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Musisz wyrazić zgodę na przetwarzanie danych osobowych'
+  },
+  agreeTerms: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Musisz zaakceptować regulamin zawodów'
   }
 }
 
 function resetValidation(e: Event) {
   const target = e.target as HTMLFormElement
 
-  validations[target.name].status.value = ''
-  validations[target.name].message.value = ''
+  const [key, idx] = target.name.split('-').map(([k, i]) => [k, Number(i)]) as unknown as [
+    keyof typeof validations,
+    number
+  ]
+
+  if (!(key in validations)) {
+    console.warn(`No validation found for key: ${key}`)
+    return
+  }
+
+  if (Array.isArray(validations[key])) {
+    validations[key][idx].status.value = ''
+    validations[key][idx].message.value = ''
+  } else {
+    validations[key].status.value = ''
+    validations[key].message.value = ''
+  }
 }
 
 async function submitForm() {
@@ -406,6 +438,22 @@ async function submitForm() {
   }
 
   if (!$formRef.value.checkValidity()) {
+    return
+  }
+
+  if (!agreePrivacy.value) {
+    const element = document.querySelector('[name="agreePrivacy"] input') as HTMLInputElement
+    element.focus()
+    element.setCustomValidity(validations.agreePrivacy.errorMessage)
+
+    return
+  }
+
+  if (!agreeTerms.value) {
+    const element = document.querySelector('[name="agreeTerms"] input') as HTMLInputElement
+    element.focus()
+    element.setCustomValidity(validations.agreeTerms.errorMessage)
+
     return
   }
 
@@ -673,21 +721,57 @@ onMounted(async () => {
       </h2>
 
       <div v-for="(participant, i) in participants" :key="i" class="flex gap-2 mb-2">
-        <forms-input-with-error
+        <fwb-input
           v-model="participant.name"
           type="text"
+          name="participantFirstName[]"
           placeholder="Imię"
-          class="input input-bordered flex-1"
-          :error-message="participantsError.length > i && participantsError[i].name"
-        />
+          :validation-status="validations.participantFirstName[i].status.value"
+          :required="true"
+          @change="resetValidation"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="
+                validations.participantFirstName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'
+              "
+            >
+              {{ validations.participantFirstName[i].message.value }}
+            </span>
+          </template>
+        </fwb-input>
 
-        <forms-input-with-error
+        <fwb-input
           v-model="participant.surname"
           type="text"
+          name="participantLastName[]"
           placeholder="Nazwisko"
-          class="input input-bordered flex-1"
-          :error-message="participantsError.length > i && participantsError[i].surname"
-        />
+          :validation-status="validations.participantLastName[i].status.value"
+          :required="true"
+          @change="resetValidation"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="
+                validations.participantLastName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'
+              "
+            >
+              {{ validations.participantLastName[i].message.value }}
+            </span>
+          </template>
+        </fwb-input>
+
+              class="text-xs font-bold"
+              :class="
+                validations.participantFirstName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'
+              "
+            >
+              {{ validations.participantFirstName[i].message.value }}
+            </span>
+          </template>
+        </fwb-input>
 
         <fwb-select
           v-model="participant.shirtSize"
