@@ -604,13 +604,12 @@ onMounted(async () => {
         </template>
       </fwb-input>
 
-      <div class="flex gap-2 mb-2">
+      <div class="flex gap-2 mb-2 *:w-full">
         <fwb-input
           v-model="captain.postalCode"
           type="text"
           name="captainPostalCode"
           placeholder="Kod pocztowy"
-          class="flex-1"
           :validation-status="validations.captainPostalCode.status.value"
           :required="true"
           @change="resetValidation"
@@ -630,7 +629,6 @@ onMounted(async () => {
           type="text"
           name="captainCity"
           placeholder="Miejscowość"
-          class="flex-1"
           :validation-status="validations.captainCity.status.value"
           :required="true"
           @change="resetValidation"
@@ -657,6 +655,7 @@ onMounted(async () => {
 
     <div class="mb-6">
       <h2 class="font-semibold mb-2">Zawodnicy ({{ participants.length }} z 9 możliwych)</h2>
+
       <div v-for="(participant, i) in participants" :key="i" class="flex gap-2 mb-2">
         <forms-input-with-error
           v-model="participant.name"
