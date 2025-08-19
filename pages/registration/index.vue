@@ -393,6 +393,7 @@ async function submitForm() {
     console.info(element, element.value, element.checkValidity())
 
     if (!element.checkValidity()) {
+      console.info(e.validity)
       element.focus()
       element.setCustomValidity(validations.teamName.errorMessage)
       validations.teamName.status.value = 'error'
