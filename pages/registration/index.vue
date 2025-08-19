@@ -374,6 +374,11 @@ const validations = {
     message: ref(),
     errorMessage: 'Podaj nazwisko zawodnika'
   })),
+  robotName: Array.from({ length: maxRobots }, () => ({
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj nazwę robota'
+  })),
   agreePrivacy: {
     status: ref<'success' | 'error' | ''>(''),
     message: ref(),
@@ -754,21 +759,9 @@ onMounted(async () => {
           <template #validationMessage>
             <span
               class="text-xs font-bold"
-              :class="
-                validations.participantLastName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'
-              "
+              :class="validations.participantLastName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
             >
               {{ validations.participantLastName[i].message.value }}
-            </span>
-          </template>
-        </fwb-input>
-
-              class="text-xs font-bold"
-              :class="
-                validations.participantFirstName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'
-              "
-            >
-              {{ validations.participantFirstName[i].message.value }}
             </span>
           </template>
         </fwb-input>
@@ -799,6 +792,25 @@ onMounted(async () => {
       </h2>
 
       <div v-for="(robot, i) in robots" :key="i" class="flex gap-2 mb-2">
+        <fwb-input
+          v-model="robot.name"
+          type="text"
+          name="robotName[]"
+          placeholder="Nazwa robota"
+          :validation-status="validations.robotName[i].status.value"
+          :required="true"
+          @change="resetValidation"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="validations.robotName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+            >
+              {{ validations.robotName[i].message.value }}
+            </span>
+          </template>
+        </fwb-input>
+
         <forms-input-with-error
           v-model="robot.name"
           type="text"
