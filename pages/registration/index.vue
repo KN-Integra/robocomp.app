@@ -390,7 +390,7 @@ async function submitForm() {
   for (const el of $formRef.value.elements) {
     const element = el as HTMLFormElement
 
-    console.info(element, element.checkValidity())
+    console.info(element, element.value, element.checkValidity())
 
     if (!element.checkValidity()) {
       element.focus()
@@ -654,7 +654,18 @@ onMounted(async () => {
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2">Zawodnicy ({{ participants.length }} z 9 możliwych)</h2>
+      <h2 class="font-semibold mb-2 w-full inline-flex items-center justify-between">
+        <span>Zawodnicy ({{ participants.length }} z 9 możliwych)</span>
+
+        <fwb-button color="green" :disabled="participants.length + 1 >= maxParticipants" @click="addParticipant">
+          <template #prefix>
+            <lazy-client-only>
+              <fa-icon icon="fa-solid fa-plus" class="h-4 w-4" />
+            </lazy-client-only>
+          </template>
+          Dodaj zawodnika
+        </fwb-button>
+      </h2>
 
       <div v-for="(participant, i) in participants" :key="i" class="flex gap-2 mb-2">
         <forms-input-with-error
@@ -681,19 +692,23 @@ onMounted(async () => {
         />
         <fwb-button color="red" @click="removeParticipant(i)">Usuń</fwb-button>
       </div>
-
-      <fwb-button color="green" :disabled="participants.length + 1 >= maxParticipants" @click="addParticipant">
-        <template #prefix>
-          <lazy-client-only>
-            <fa-icon icon="fa-solid fa-plus" class="h-4 w-4" />
-          </lazy-client-only>
-        </template>
-        Dodaj zawodnika
-      </fwb-button>
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2">Roboty ({{ robots.length }} z 5 możliwych)</h2>
+      <h2 class="font-semibold mb-2">
+        <span>Roboty ({{ robots.length }} z 5 możliwych)</span>
+
+        <fwb-button color="green" :disabled="robots.length >= maxRobots" @click="addRobot">
+          <template #prefix>
+            <lazy-client-only>
+              <fa-icon icon="fa-solid fa-plus" class="h-4 w-4" />
+            </lazy-client-only>
+          </template>
+
+          Dodaj robota
+        </fwb-button>
+      </h2>
+
       <div v-for="(robot, i) in robots" :key="i" class="flex gap-2 mb-2">
         <forms-input-with-error
           v-model="robot.name"
@@ -707,16 +722,6 @@ onMounted(async () => {
 
         <fwb-button color="red" @click="removeRobot(i)">Usuń</fwb-button>
       </div>
-
-      <fwb-button color="green" :disabled="robots.length >= maxRobots" @click="addRobot">
-        <template #prefix>
-          <lazy-client-only>
-            <fa-icon icon="fa-solid fa-plus" class="h-4 w-4" />
-          </lazy-client-only>
-        </template>
-
-        Dodaj robota
-      </fwb-button>
     </div>
 
     <div class="mb-4 flex items-center gap-2">
