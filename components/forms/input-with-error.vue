@@ -26,7 +26,7 @@ function onInput(event: Event) {
       :value="props.modelValue"
       :placeholder="props.placeholder"
       :type="props.type ?? 'text'"
-      :class="['input input-bordered w-full', { 'input-error': props.error }]"
+      :class="['input input-bordered w-full', { 'input-error': props.errorMessage !== undefined }]"
       @input="onInput"
     />
 
