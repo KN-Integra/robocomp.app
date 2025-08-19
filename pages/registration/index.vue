@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { FwbButton, FwbInput, FwbSelect, FwbCheckbox } from 'flowbite-vue'
 
-import type { CompetitionResponse } from '~/server/api/competition/index.get'
-import type { CountriesResponse } from '~/server/api/countries/index.get'
 import type { IsExistTeamResponse } from '~/server/api/isExistTeam/index.get'
 import type { RegistrationRequest, RegistrationResponse } from '~/server/api/registration/index.post'
 
 import { isValidEmail, isValidPhone, isValidPostalCode } from '~/server/utils/formValidator'
-
-const route = useRouter()
 
 interface Participant {
   name: string
@@ -427,7 +423,7 @@ async function submitForm() {
     })
 
     const data: RegistrationResponse = await res.json()
-    await route.push({
+    await navigateTo({
       path: '/registration/finish',
       state: {
         success: data.statusCode === 0,
@@ -481,6 +477,7 @@ onMounted(async () => {
     <div class="mb-4">
       <label class="block font-semibold mb-1">Nazwa zespołu</label>
       <fwb-input
+        v-model="teamName"
         type="text"
         name="teamName"
         placeholder="Nazwa zespołu"
@@ -502,6 +499,7 @@ onMounted(async () => {
     <div class="mb-6">
       <h2 class="font-semibold mb-2">Kapitan</h2>
       <fwb-input
+        v-model="captain.name"
         type="text"
         name="captainFirstName"
         placeholder="Imię"
@@ -520,6 +518,7 @@ onMounted(async () => {
       </fwb-input>
 
       <fwb-input
+        v-model="captain.surname"
         type="text"
         name="captainLastName"
         placeholder="Nazwisko"
@@ -545,6 +544,7 @@ onMounted(async () => {
       />
 
       <fwb-input
+        v-model="captain.email"
         type="email"
         name="captainEmail"
         placeholder="Adres e-mail"
@@ -563,6 +563,7 @@ onMounted(async () => {
       </fwb-input>
 
       <fwb-input
+        v-model="captain.phone"
         type="tel"
         name="captainPhone"
         placeholder="Telefon"
@@ -583,6 +584,7 @@ onMounted(async () => {
       <h3 class="font-medium mt-4 mb-2">Adres zamieszkania</h3>
 
       <fwb-input
+        v-model="captain.street"
         type="text"
         name="captainStreet"
         placeholder="Ulica i numer"
@@ -602,9 +604,11 @@ onMounted(async () => {
 
       <div class="flex gap-2 mb-2">
         <fwb-input
+          v-model="captain.postalCode"
           type="text"
           name="captainPostalCode"
           placeholder="Kod pocztowy"
+          class="flex-1"
           :validation-status="validations.captainPostalCode.status.value"
           :required="true"
           @change="resetValidation"
@@ -620,9 +624,11 @@ onMounted(async () => {
         </fwb-input>
 
         <fwb-input
+          v-model="captain.city"
           type="text"
           name="captainCity"
           placeholder="Miejscowość"
+          class="flex-1"
           :validation-status="validations.captainCity.status.value"
           :required="true"
           @change="resetValidation"
@@ -642,6 +648,7 @@ onMounted(async () => {
         v-model="captain.country"
         name="captainCountry"
         class="select select-bordered w-full"
+        :required="true"
         :options="countries"
       />
     </div>
@@ -665,7 +672,12 @@ onMounted(async () => {
           :error-message="participantsError.length > i && participantsError[i].surname"
         />
 
-        <fwb-select v-model="participant.shirtSize" name="participantShirtSize[]" :options="shirtSizes" />
+        <fwb-select
+          v-model="participant.shirtSize"
+          name="participantShirtSize[]"
+          :options="shirtSizes"
+          :required="true"
+        />
         <fwb-button color="red" @click="removeParticipant(i)">Usuń</fwb-button>
       </div>
 
@@ -690,7 +702,7 @@ onMounted(async () => {
           :error-message="robotsError.length > i ? robotsError[i].name : undefined"
         />
 
-        <fwb-select v-model="robot.category" name="robotCategories[]" :options="categories" />
+        <fwb-select v-model="robot.category" name="robotCategories[]" :options="categories" :required="true" />
 
         <fwb-button color="red" @click="removeRobot(i)">Usuń</fwb-button>
       </div>
@@ -711,11 +723,12 @@ onMounted(async () => {
         v-model="agreePrivacy"
         name="agreePrivacy"
         label="Wyrażam zgodę na przetwarzanie danych osobowych"
+        :required="true"
       />
     </div>
 
     <div class="mb-6 flex items-center gap-2">
-      <fwb-checkbox v-model="agreeTerms" name="agreeTerms" label="Akceptuję regulamin zawodów" />
+      <fwb-checkbox v-model="agreeTerms" name="agreeTerms" label="Akceptuję regulamin zawodów" :required="true" />
     </div>
 
     <fwb-button type="button" @click="submitForm">Zarejestruj zespół</fwb-button>
