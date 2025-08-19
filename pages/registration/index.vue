@@ -713,7 +713,7 @@ onMounted(async () => {
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2 inline-flex items-center justify-between">
+      <h2 class="font-semibold mb-2 w-full inline-flex items-center justify-between">
         <span>Roboty ({{ robots.length }} z 5 możliwych)</span>
 
         <fwb-button color="green" :disabled="robots.length >= maxRobots" @click="addRobot">
