@@ -172,7 +172,7 @@ watch(captain, (newVal) => {
     ok = false
   }
   if (newVal.name.length > 50) {
-    captainNameError.value = 'Imie musi mieć długość mniejszą niż 50 liter.'
+    captainNameError.value = 'Imię musi mieć długość mniejszą niż 50 liter.'
     ok = false
   }
 
