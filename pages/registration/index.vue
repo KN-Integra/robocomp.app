@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { FwbButton } from 'flowbite-vue'
+import { FwbButton, FwbInput, FwbSelect, FwbCheckbox } from 'flowbite-vue'
 
-import type { CompetitionResponse } from '~/server/api/competition/index.get'
-import type { CountriesResponse } from '~/server/api/countries/index.get'
 import type { IsExistTeamResponse } from '~/server/api/isExistTeam/index.get'
 import type { RegistrationRequest, RegistrationResponse } from '~/server/api/registration/index.post'
 
 import { isValidEmail, isValidPhone, isValidPostalCode } from '~/server/utils/formValidator'
-
-const route = useRouter()
 
 interface Participant {
   name: string
@@ -21,7 +17,7 @@ interface Robot {
   category: string
 }
 
-const shirtSizes = ['S', 'M', 'L', 'XL', 'XXL']
+const shirtSizes = ['S', 'M', 'L', 'XL', 'XXL'].map((v) => ({ value: v, name: v }))
 const maxParticipants = 10
 const maxRobots = 5
 
@@ -40,17 +36,15 @@ const captain = reactive({
 })
 
 const participants = ref<Participant[]>([])
-
 const robots = ref<Robot[]>([])
 
-const categories = ref<string[]>([])
-const countries = ref<[string, string][]>([])
+const categories = ref<{ name: string; value: string }[]>([])
+const countries = ref<{ name: string; value: string }[]>([])
 
 const agreePrivacy = ref(false)
 const agreeTerms = ref(false)
 
 // ERROR
-const formOK = ref(false)
 const teamNameError = ref<string | undefined>('')
 const captainNameError = ref<string | undefined>('')
 const captainSurnameError = ref<string | undefined>('')
@@ -73,59 +67,6 @@ interface RobotsError {
 
 const robotsError = ref<RobotsError[]>([])
 
-function checkAllForm() {
-  if (
-    teamNameError.value !== undefined ||
-    captainNameError.value !== undefined ||
-    captainSurnameError.value !== undefined ||
-    captainEmailError.value !== undefined ||
-    captainPhoneError.value !== undefined ||
-    captainStreetError.value !== undefined ||
-    captainPostalCodeError.value !== undefined ||
-    captainCityError.value !== undefined
-  ) {
-    formOK.value = false
-    return
-  }
-
-  if (captain.shirtSize === '' || captain.country === '') {
-    formOK.value = false
-    return
-  }
-
-  if (
-    participantsError.value.find((value: ParticipantError) => {
-      return value.name !== undefined || value.surname !== undefined
-    }) !== undefined ||
-    participants.value.find((value: Participant) => {
-      return value.shirtSize === ''
-    }) !== undefined
-  ) {
-    formOK.value = false
-    return
-  }
-
-  if (
-    robots.value.length === 0 ||
-    robotsError.value.find((value: RobotsError) => {
-      return value.name !== undefined
-    }) !== undefined ||
-    robots.value.find((value: Robot) => {
-      return value.category === ''
-    }) !== undefined
-  ) {
-    formOK.value = false
-    return
-  }
-
-  if (!agreePrivacy.value || !agreeTerms.value) {
-    formOK.value = false
-    return
-  }
-
-  formOK.value = true
-}
-
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 watch(teamName, (newVal) => {
   teamNameError.value = ''
@@ -134,12 +75,10 @@ watch(teamName, (newVal) => {
   }
   if (newVal.length === 0) {
     teamNameError.value = 'Podaj nazwę drużyny.'
-    checkAllForm()
     return
   }
   if (newVal.length > 50) {
     teamNameError.value = 'Nazwa musi mieć długość mniejszą niż 50 liter.'
-    checkAllForm()
     return
   }
 
@@ -154,7 +93,6 @@ watch(teamName, (newVal) => {
     } catch (error) {
       teamNameError.value = 'Błąd połączenia z serwerem.'
     }
-    checkAllForm()
   }, 500)
 })
 
@@ -239,7 +177,6 @@ watch(captain, (newVal) => {
     captainPostalCodeError.value = undefined
     captainCityError.value = undefined
   }
-  checkAllForm()
 })
 
 watch(
@@ -264,7 +201,6 @@ watch(
       tempList.push(error)
     })
     participantsError.value = tempList
-    checkAllForm()
   }
 )
 
@@ -284,12 +220,8 @@ watch(
       tempList.push(error)
     })
     robotsError.value = tempList
-    checkAllForm()
   }
 )
-
-watch(agreePrivacy, () => checkAllForm())
-watch(agreeTerms, () => checkAllForm())
 
 async function checkTeamNameExist(name: string) {
   try {
@@ -325,7 +257,161 @@ function removeRobot(index: number) {
   robots.value.splice(index, 1)
 }
 
+const $formRef = ref<HTMLFormElement>()
+
+const validations = {
+  teamName: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj nazwę drużyny'
+  },
+  captainFirstName: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj imię kapitana'
+  },
+  captainLastName: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj nazwisko kapitana'
+  },
+  captainEmail: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj adres e-mail kapitana'
+  },
+  captainPhone: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj numer telefonu kapitana'
+  },
+  captainStreet: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj ulicę kapitana'
+  },
+  captainPostalCode: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj kod pocztowy kapitana'
+  },
+  captainCity: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj miasto kapitana'
+  },
+  participantFirstName: Array.from({ length: maxParticipants }, () => ({
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj imię zawodnika'
+  })),
+  participantLastName: Array.from({ length: maxParticipants }, () => ({
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj nazwisko zawodnika'
+  })),
+  robotName: Array.from({ length: maxRobots }, () => ({
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj nazwę robota'
+  })),
+  agreePrivacy: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Musisz wyrazić zgodę na przetwarzanie danych osobowych'
+  },
+  agreeTerms: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Musisz zaakceptować regulamin zawodów'
+  }
+}
+
+function resetValidation(e: Event) {
+  const target = e.target as HTMLFormElement
+
+  const [key, idx] = target.name.split('-').map(([k, i]) => [k, Number(i)]) as unknown as [
+    keyof typeof validations,
+    number
+  ]
+
+  if (!(key in validations)) {
+    console.warn(`No validation found for key: ${key}`)
+    return
+  }
+
+  if (Array.isArray(validations[key])) {
+    validations[key][idx].status.value = ''
+    validations[key][idx].message.value = ''
+  } else {
+    validations[key].status.value = ''
+    validations[key].message.value = ''
+  }
+}
+
 async function submitForm() {
+  if (!$formRef.value) return
+
+  const formData = new FormData($formRef.value)
+
+  console.info($formRef.value.elements)
+
+  for (const k of formData.keys()) {
+    console.info(`${k}: ${formData.get(k)}`)
+  }
+
+  for (const el of $formRef.value.elements) {
+    const element = el as HTMLFormElement
+
+    const [key, idx] = element.name.split('-').map(([k, i]) => [k, Number(i)]) as unknown as [
+      keyof typeof validations,
+      number
+    ]
+
+    if (![...formData.keys()].includes(element.name)) {
+      continue
+    }
+
+    console.info(element, element.value, element.checkValidity())
+
+    if (!element.checkValidity()) {
+      console.debug(element.validity)
+      element.focus()
+
+      if (Array.isArray(validations[key])) {
+        element.setCustomValidity(validations[key][idx].errorMessage)
+        validations[key][idx].status.value = 'error'
+        validations[key][idx].message.value = element.validationMessage
+      } else {
+        element.setCustomValidity(validations[key].errorMessage)
+        validations[key].status.value = 'error'
+        validations[key].message.value = element.validationMessage
+      }
+    }
+  }
+
+  if (!$formRef.value.checkValidity()) {
+    return
+  }
+
+  if (!agreePrivacy.value) {
+    const element = document.querySelector('[name="agreePrivacy"] input') as HTMLInputElement
+    element.focus()
+    element.setCustomValidity(validations.agreePrivacy.errorMessage)
+
+    return
+  }
+
+  if (!agreeTerms.value) {
+    const element = document.querySelector('[name="agreeTerms"] input') as HTMLInputElement
+    element.focus()
+    element.setCustomValidity(validations.agreeTerms.errorMessage)
+
+    return
+  }
+
+  return
+
   const payload: RegistrationRequest = {
     teamName: teamName.value,
     captain,
@@ -334,6 +420,7 @@ async function submitForm() {
     agreePrivacy: agreePrivacy.value,
     agreeTerms: agreeTerms.value
   }
+
   try {
     const res = await fetch('/api/registration', {
       method: 'POST',
@@ -344,7 +431,7 @@ async function submitForm() {
     })
 
     const data: RegistrationResponse = await res.json()
-    await route.push({
+    await navigateTo({
       path: '/registration/finish',
       state: {
         success: data.statusCode === 0,
@@ -360,164 +447,337 @@ async function submitForm() {
 
 onMounted(async () => {
   try {
-    const response = await fetch('api/competition')
-    const data = (await response.json()) as CompetitionResponse
-    categories.value = data.data.competitions.map((element) => element.name) || []
+    const { data } = await $fetch('/api/competition')
+
+    if (!(data && 'competitions' in data)) {
+      throw new Error('No competition data found')
+    }
+
+    categories.value = (data.competitions.map((element) => [element.name, element.name]) || []).map((v) => ({
+      value: v[1],
+      name: v[0]
+    }))
   } catch (error) {
     console.error('Error in loading robots categories:', error)
   }
 
   try {
-    const response = await fetch('api/countries')
-    const data = (await response.json()) as CountriesResponse
-    countries.value = data.data.countries.map((element) => [element.name, element.code]) || []
+    const { data } = await $fetch('/api/countries')
+
+    if (!(data && 'countries' in data)) {
+      throw new Error('No country data found')
+    }
+
+    countries.value = (data.countries.map((element) => [element.name, element.code]) || []).map((v) => ({
+      value: v[1],
+      name: v[0]
+    }))
   } catch (error) {
-    console.error('Error in loading robots categories:', error)
+    console.error('Error in loading countries:', error)
   }
 })
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
+  <form ref="$formRef" class="container mx-auto px-4 py-8 max-w-4xl">
     <h1 class="text-2xl font-bold mb-6">Formularz rejestracyjny</h1>
 
     <div class="mb-4">
       <label class="block font-semibold mb-1">Nazwa zespołu</label>
-      <input-with-error
+      <fwb-input
         v-model="teamName"
         type="text"
-        class="input input-bordered w-full"
-        :error-message="teamNameError"
-      />
+        name="teamName"
+        placeholder="Nazwa zespołu"
+        :validation-status="validations.teamName.status.value"
+        :required="true"
+        @change="resetValidation"
+      >
+        <template #validationMessage>
+          <span
+            class="text-xs font-bold"
+            :class="validations.teamName.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+          >
+            {{ validations.teamName.message.value }}
+          </span>
+        </template>
+      </fwb-input>
     </div>
 
     <div class="mb-6">
       <h2 class="font-semibold mb-2">Kapitan</h2>
-      <input-with-error
+      <fwb-input
         v-model="captain.name"
         type="text"
+        name="captainFirstName"
         placeholder="Imię"
-        class="input input-bordered w-full mb-2"
-        :error-message="captainNameError"
-      />
-      <input-with-error
+        :validation-status="validations.captainFirstName.status.value"
+        :required="true"
+        @change="resetValidation"
+      >
+        <template #validationMessage>
+          <span
+            class="text-xs font-bold"
+            :class="validations.captainFirstName.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+          >
+            {{ validations.captainFirstName.message.value }}
+          </span>
+        </template>
+      </fwb-input>
+
+      <fwb-input
         v-model="captain.surname"
         type="text"
+        name="captainLastName"
         placeholder="Nazwisko"
-        class="input input-bordered w-full mb-2"
-        :error-message="captainSurnameError"
+        :validation-status="validations.captainLastName.status.value"
+        :required="true"
+        @change="resetValidation"
+      >
+        <template #validationMessage>
+          <span
+            class="text-xs font-bold"
+            :class="validations.captainLastName.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+          >
+            {{ validations.captainLastName.message.value }}
+          </span>
+        </template>
+      </fwb-input>
+
+      <fwb-select
+        v-model="captain.shirtSize"
+        name="captainShirtSize"
+        class="select select-bordered w-full mb-2"
+        :options="shirtSizes"
       />
-      <select v-model="captain.shirtSize" class="select select-bordered w-full mb-2">
-        <option disabled value="">Rozmiar koszulki</option>
-        <option v-for="size in shirtSizes" :key="size" :value="size">{{ size }}</option>
-      </select>
-      <input-with-error
+
+      <fwb-input
         v-model="captain.email"
         type="email"
-        placeholder="Email"
-        class="input input-bordered w-full mb-2"
-        :error-message="captainEmailError"
-      />
-      <input-with-error
+        name="captainEmail"
+        placeholder="Adres e-mail"
+        :validation-status="validations.captainEmail.status.value"
+        :required="true"
+        @change="resetValidation"
+      >
+        <template #validationMessage>
+          <span
+            class="text-xs font-bold"
+            :class="validations.captainEmail.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+          >
+            {{ validations.captainEmail.message.value }}</span
+          >
+        </template>
+      </fwb-input>
+
+      <fwb-input
         v-model="captain.phone"
         type="tel"
+        name="captainPhone"
         placeholder="Telefon"
-        class="input input-bordered w-full mb-2"
-        :error-message="captainPhoneError"
-      />
+        :validation-status="validations.captainPhone.status.value"
+        :required="true"
+        @change="resetValidation"
+      >
+        <template #validationMessage>
+          <span
+            class="text-xs font-bold"
+            :class="validations.captainPhone.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+          >
+            {{ validations.captainPhone.message.value }}
+          </span>
+        </template>
+      </fwb-input>
 
       <h3 class="font-medium mt-4 mb-2">Adres zamieszkania</h3>
-      <input-with-error
+
+      <fwb-input
         v-model="captain.street"
         type="text"
+        name="captainStreet"
         placeholder="Ulica i numer"
-        class="input input-bordered w-full mb-2"
-        :error-message="captainStreetError"
-      />
-      <div class="flex gap-2 mb-2">
-        <input-with-error
+        :validation-status="validations.captainStreet.status.value"
+        :required="true"
+        @change="resetValidation"
+      >
+        <template #validationMessage>
+          <span
+            class="text-xs font-bold"
+            :class="validations.captainStreet.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+          >
+            {{ validations.captainStreet.message.value }}
+          </span>
+        </template>
+      </fwb-input>
+
+      <div class="flex gap-2 mb-2 *:w-full">
+        <fwb-input
           v-model="captain.postalCode"
           type="text"
+          name="captainPostalCode"
           placeholder="Kod pocztowy"
-          class="input input-bordered w-1/2"
-          :error-message="captainPostalCodeError"
-        />
-        <input-with-error
+          :validation-status="validations.captainPostalCode.status.value"
+          :required="true"
+          @change="resetValidation"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="validations.captainPostalCode.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+            >
+              {{ validations.captainPostalCode.message.value }}
+            </span>
+          </template>
+        </fwb-input>
+
+        <fwb-input
           v-model="captain.city"
           type="text"
+          name="captainCity"
           placeholder="Miejscowość"
-          class="input input-bordered w-1/2"
-          :error-message="captainCityError"
-        />
+          :validation-status="validations.captainCity.status.value"
+          :required="true"
+          @change="resetValidation"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="validations.captainCity.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+            >
+              {{ validations.captainCity.message.value }}
+            </span>
+          </template>
+        </fwb-input>
       </div>
-      <select v-model="captain.country" class="select select-bordered w-full">
-        <option disabled value="">Kraj</option>
-        <option v-for="country in countries" :key="country[0]" :value="country[1]">{{ country[0] }}</option>
-      </select>
+
+      <fwb-select
+        v-model="captain.country"
+        name="captainCountry"
+        class="select select-bordered w-full"
+        :required="true"
+        :options="countries"
+      />
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2">Zawodnicy ({{ participants.length }} z 9 możliwych)</h2>
+      <h2 class="font-semibold mb-2 w-full inline-flex items-center justify-between">
+        <span>Zawodnicy ({{ participants.length }} z 9 możliwych)</span>
+
+        <fwb-button color="green" :disabled="participants.length + 1 >= maxParticipants" @click="addParticipant">
+          <template #prefix>
+            <lazy-client-only>
+              <fa-icon icon="fa-solid fa-plus" class="h-4 w-4" />
+            </lazy-client-only>
+          </template>
+          Dodaj zawodnika
+        </fwb-button>
+      </h2>
+
       <div v-for="(participant, i) in participants" :key="i" class="flex gap-2 mb-2">
-        <input-with-error
+        <fwb-input
           v-model="participant.name"
           type="text"
+          :name="'participantFirstName-' + i"
           placeholder="Imię"
-          class="input input-bordered flex-1"
-          :error-message="participantsError.length > i ? participantsError[i].name : undefined"
-        />
-        <input-with-error
+          :validation-status="validations.participantFirstName[i].status.value"
+          :required="true"
+          @change="resetValidation"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="
+                validations.participantFirstName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'
+              "
+            >
+              {{ validations.participantFirstName[i].message.value }}
+            </span>
+          </template>
+        </fwb-input>
+
+        <fwb-input
           v-model="participant.surname"
           type="text"
+          :name="'participantLastName-' + i"
           placeholder="Nazwisko"
-          class="input input-bordered flex-1"
-          :error-message="participantsError.length > i ? participantsError[i].surname : undefined"
+          :validation-status="validations.participantLastName[i].status.value"
+          :required="true"
+          @change="resetValidation"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="validations.participantLastName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+            >
+              {{ validations.participantLastName[i].message.value }}
+            </span>
+          </template>
+        </fwb-input>
+
+        <fwb-select
+          v-model="participant.shirtSize"
+          :name="'participantShirtSize-' + i"
+          :options="shirtSizes"
+          :required="true"
         />
-        <select v-model="participant.shirtSize" class="select select-bordered w-32">
-          <option disabled value="">Rozmiar</option>
-          <option v-for="size in shirtSizes" :key="size" :value="size">{{ size }}</option>
-        </select>
-        <button class="btn btn-sm btn-error" @click="removeParticipant(i)">Usuń</button>
+        <fwb-button color="red" @click="removeParticipant(i)">Usuń</fwb-button>
       </div>
-      <button
-        class="btn btn-sm btn-primary mt-2"
-        :disabled="participants.length + 1 >= maxParticipants"
-        @click="addParticipant"
-      >
-        Dodaj zawodnika
-      </button>
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2">Roboty ({{ robots.length }} z 5 możliwych)</h2>
+      <h2 class="font-semibold mb-2 w-full inline-flex items-center justify-between">
+        <span>Roboty ({{ robots.length }} z 5 możliwych)</span>
+
+        <fwb-button color="green" :disabled="robots.length >= maxRobots" @click="addRobot">
+          <template #prefix>
+            <lazy-client-only>
+              <fa-icon icon="fa-solid fa-plus" class="h-4 w-4" />
+            </lazy-client-only>
+          </template>
+
+          Dodaj robota
+        </fwb-button>
+      </h2>
+
       <div v-for="(robot, i) in robots" :key="i" class="flex gap-2 mb-2">
-        <input-with-error
+        <fwb-input
           v-model="robot.name"
           type="text"
+          :name="'robotName-' + i"
           placeholder="Nazwa robota"
-          class="input input-bordered flex-1"
-          :error-message="robotsError.length > i ? robotsError[i].name : undefined"
-        />
-        <select v-model="robot.category" class="select select-bordered w-64">
-          <option disabled value="">Wybierz kategorię</option>
-          <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-        </select>
-        <button class="btn btn-sm btn-error" @click="removeRobot(i)">Usuń</button>
+          :validation-status="validations.robotName[i].status.value"
+          :required="true"
+          @change="resetValidation"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="validations.robotName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+            >
+              {{ validations.robotName[i].message.value }}
+            </span>
+          </template>
+        </fwb-input>
+
+        <fwb-select v-model="robot.category" name="robotCategories[]" :options="categories" :required="true" />
+
+        <fwb-button color="red" @click="removeRobot(i)">Usuń</fwb-button>
       </div>
-      <button class="btn btn-sm btn-primary" :disabled="robots.length >= maxRobots" @click="addRobot">
-        Dodaj robota
-      </button>
     </div>
 
     <div class="mb-4 flex items-center gap-2">
-      <input v-model="agreePrivacy" type="checkbox" class="checkbox" />
-      <label>Wyrażam zgodę na przetwarzanie danych osobowych</label>
-    </div>
-    <div class="mb-6 flex items-center gap-2">
-      <input v-model="agreeTerms" type="checkbox" class="checkbox" />
-      <label>Akceptuję regulamin zawodów</label>
+      <fwb-checkbox
+        v-model="agreePrivacy"
+        name="agreePrivacy"
+        label="Wyrażam zgodę na przetwarzanie danych osobowych"
+        :required="true"
+      />
     </div>
 
-    <fwb-button class="btn btn-success w-full" :disabled="!formOK" @click="submitForm"> Zarejestruj zespół </fwb-button>
-  </div>
+    <div class="mb-6 flex items-center gap-2">
+      <fwb-checkbox v-model="agreeTerms" name="agreeTerms" label="Akceptuję regulamin zawodów" :required="true" />
+    </div>
+
+    <fwb-button type="button" @click="submitForm">Zarejestruj zespół</fwb-button>
+  </form>
 </template>
