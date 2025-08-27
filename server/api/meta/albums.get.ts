@@ -10,11 +10,49 @@ export interface AlbumResponse {
   statusCode: number
 }
 
-export default defineEventHandler(async (): Promise<AlbumResponse | H3Error> => {
+// TODO: Cache results for some time
+async function authorize() {
+  if (!runtimeConfig.META_API_KEY) {
+    throw new Error('META_API_KEY is not defined')
+  }
+  if (!runtimeConfig.ROBOCOMP_PAGE_ID) {
+    throw new Error('ROBOCOMP_PAGE_ID is not defined')
+  }
+  if (!runtimeConfig.META_GRAPH_ENDPOINT) {
+    throw new Error('META_GRAPH_ENDPOINT is not defined')
+  }
+  if (!runtimeConfig.META_GRAPH_VERSION) {
+    throw new Error('META_GRAPH_VERSION is not defined')
+  }
+
   try {
     const query = new URLSearchParams({
+      grant_type: 'fb_exchange_token',
+      client_id: runtimeConfig.META_APP_ID as string,
+      client_secret: runtimeConfig.META_APP_SECRET as string,
+      fb_exchange_token: runtimeConfig.META_API_KEY as string
+    })
+
+    const response = await $fetch(
+      `${runtimeConfig.META_GRAPH_ENDPOINT}/${runtimeConfig.META_GRAPH_VERSION}/oauth/access_token?${query.toString()}`
+    )
+
+    console.debug('Authorized with Meta API:', response)
+
+    return response.access_token
+  } catch (error) {
+    console.error('Error authorizing with Meta API:', error)
+    throw error
+  }
+}
+
+export default defineEventHandler(async (): Promise<AlbumResponse | H3Error> => {
+  try {
+    const accessToken = await authorize()
+
+    const query = new URLSearchParams({
       fields: 'photos{link,webp_images},name,link',
-      access_token: runtimeConfig.META_API_KEY
+      access_token: accessToken
     })
 
     const response = await $fetch<MetaAlbumsData>(

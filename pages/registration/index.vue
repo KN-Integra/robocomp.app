@@ -390,10 +390,6 @@ async function submitForm() {
     }
   }
 
-  if (!$formRef.value.checkValidity()) {
-    return
-  }
-
   if (!agreePrivacy.value) {
     const element = document.querySelector('[name="agreePrivacy"] input') as HTMLInputElement
     element.focus()

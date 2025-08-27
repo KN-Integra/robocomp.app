@@ -2,9 +2,9 @@
 import { FwbAccordion, FwbAccordionContent, FwbAccordionHeader, FwbAccordionPanel } from 'flowbite-vue'
 import { H3Error } from 'h3'
 
-import getSizeNameFromSize from '~/helpers/getSizeNameFromSize'
-
 import type { AlbumResponse } from '~/server/api/meta/albums.get'
+
+import getSizeNameFromSize from '~/helpers/getSizeNameFromSize'
 
 const { data: galleryData, status } = useLazyFetch<AlbumResponse | H3Error>('/api/meta/albums')
 </script>

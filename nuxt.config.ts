@@ -257,6 +257,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     META_API_KEY: process.env.META_API_KEY,
+    META_APP_ID: process.env.META_APP_ID,
+    META_APP_SECRET: process.env.META_APP_SECRET,
     META_GRAPH_ENDPOINT: process.env.META_GRAPH_ENDPOINT,
     META_GRAPH_VERSION: process.env.META_GRAPH_VERSION,
     ROBOCOMP_PAGE_ID: process.env.ROBOCOMP_PAGE_ID,
