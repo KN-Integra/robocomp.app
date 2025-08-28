@@ -44,16 +44,6 @@ const countries = ref<{ name: string; value: string }[]>([])
 const agreePrivacy = ref(false)
 const agreeTerms = ref(false)
 
-// ERROR
-const teamNameError = ref<string | undefined>('')
-const captainNameError = ref<string | undefined>('')
-const captainSurnameError = ref<string | undefined>('')
-const captainEmailError = ref<string | undefined>('')
-const captainPhoneError = ref<string | undefined>('')
-const captainStreetError = ref<string | undefined>('')
-const captainPostalCodeError = ref<string | undefined>('')
-const captainCityError = ref<string | undefined>('')
-
 interface ParticipantError {
   name: string | undefined
   surname: string | undefined
@@ -68,17 +58,22 @@ interface RobotsError {
 const robotsError = ref<RobotsError[]>([])
 
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
+
 watch(teamName, (newVal) => {
-  teamNameError.value = ''
+  validations.teamName.message.value = ''
+  validations.teamName.status.value = ''
+
   if (debounceTimeout) {
     clearTimeout(debounceTimeout)
   }
   if (newVal.length === 0) {
-    teamNameError.value = 'Podaj nazwę drużyny.'
+    validations.teamName.message.value = 'Podaj nazwę drużyny.'
+    validations.teamName.status.value = 'error'
     return
   }
   if (newVal.length > 50) {
-    teamNameError.value = 'Nazwa musi mieć długość mniejszą niż 50 liter.'
+    validations.teamName.message.value = 'Nazwa musi mieć długość mniejszą niż 50 liter.'
+    validations.teamName.status.value = 'error'
     return
   }
 
@@ -86,97 +81,17 @@ watch(teamName, (newVal) => {
     try {
       const isTaken = await checkTeamNameExist(newVal)
       if (isTaken) {
-        teamNameError.value = 'Ta nazwa jest już zajęta.'
+        validations.teamName.message.value = 'Ta nazwa jest już zajęta.'
+        validations.teamName.status.value = 'error'
       } else {
-        teamNameError.value = undefined
+        validations.teamName.message.value = undefined
+        validations.teamName.status.value = ''
       }
     } catch (error) {
-      teamNameError.value = 'Błąd połączenia z serwerem.'
+      validations.teamName.message.value = 'Błąd połączenia z serwerem.'
+      validations.teamName.status.value = 'error'
     }
   }, 500)
-})
-
-watch(captain, (newVal) => {
-  captainNameError.value = undefined
-  captainSurnameError.value = undefined
-  captainEmailError.value = undefined
-  captainPhoneError.value = undefined
-  captainStreetError.value = undefined
-  captainPostalCodeError.value = undefined
-  captainCityError.value = undefined
-  let ok = true
-  if (newVal.name.length === 0) {
-    captainNameError.value = 'Podaj imię kapitana.'
-    ok = false
-  }
-  if (newVal.name.length > 50) {
-    captainNameError.value = 'Imię musi mieć długość mniejszą niż 50 liter.'
-    ok = false
-  }
-
-  if (newVal.surname.length === 0) {
-    captainSurnameError.value = 'Podaj nazwisko kapitana.'
-    ok = false
-  }
-  if (newVal.surname.length > 50) {
-    captainSurnameError.value = 'Nazwisko musi mieć długość mniejszą niż 50 liter.'
-    ok = false
-  }
-
-  if (newVal.email.length === 0) {
-    captainEmailError.value = 'Podaj email'
-    ok = false
-  }
-  if (!isValidEmail(newVal.email)) {
-    captainEmailError.value = 'Nie poprawny format email'
-    ok = false
-  }
-
-  if (newVal.phone.length === 0) {
-    captainPhoneError.value = 'Podaj numer telefonu'
-    ok = false
-  }
-  if (!isValidPhone(newVal.phone)) {
-    captainPhoneError.value = 'Nie poprawny format numeru telefonu'
-    ok = false
-  }
-
-  if (newVal.street.length === 0) {
-    captainStreetError.value = 'Podaj ulicę.'
-    ok = false
-  }
-  if (newVal.street.length > 50) {
-    captainStreetError.value = 'Ulica musi mieć długość mniejszą niż 50 liter.'
-    ok = false
-  }
-
-  if (newVal.postalCode.length === 0) {
-    captainPostalCodeError.value = 'Podaj kod pocztowy.'
-    ok = false
-  }
-  if (!isValidPostalCode(newVal.postalCode)) {
-    captainPostalCodeError.value = 'Nie poprawny format kodu pocztowego'
-    ok = false
-  }
-
-  if (newVal.city.length === 0) {
-    captainCityError.value = 'Podaj miasto.'
-    ok = false
-  }
-  if (newVal.city.length > 50) {
-    captainCityError.value = 'Miasto musi mieć długość mniejszą niż 50 liter.'
-    ok = false
-  }
-
-  if (ok) {
-    captainNameError.value = undefined
-    captainSurnameError.value = undefined
-    captainEmailError.value = undefined
-    captainPhoneError.value = undefined
-    captainStreetError.value = undefined
-    captainPostalCodeError.value = undefined
-    captainCityError.value = undefined
-  }
 })
 
 watch(
@@ -373,6 +288,20 @@ async function submitForm() {
     }
 
     console.info(element, element.value, element.checkValidity())
+
+    if (!element.value && validations[key]) {
+      element.focus()
+
+      if (Array.isArray(validations[key])) {
+        element.setCustomValidity(validations[key][idx].errorMessage)
+        validations[key][idx].status.value = 'error'
+        validations[key][idx].message.value = validations[key][idx].errorMessage
+      } else {
+        element.setCustomValidity(validations[key].errorMessage)
+        validations[key].status.value = 'error'
+        validations[key].message.value = validations[key].errorMessage
+      }
+    }
 
     if (!element.checkValidity()) {
       console.debug(element.validity)
