@@ -262,7 +262,6 @@ export default defineEventHandler(async (event): Promise<RegistrationResponse> =
 
     return response
   } catch (error) {
-    console.error(error)
-    return createError({ statusCode: 500, statusMessage: 'db-error' })
+    return createError({ statusCode: 500, statusMessage: 'email-error' })
   }
 })
