@@ -206,7 +206,7 @@ const validations = {
 }
 
 function resetValidation(e: Event) {
-  const target = e.target as HTMLFormElement
+  const element = e.target as HTMLFormElement
 
   const splitName = element.name.split('-')
     const key = splitName[0] as keyof typeof validations
