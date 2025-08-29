@@ -38,7 +38,7 @@ header a:not(.router-link-exact-active) span.nav {
 }
 
 header a.router-link-exact-active span.nav {
-  @apply decoration-solid decoration-from-font underline underline-offset-2;
+  @apply underline decoration-solid decoration-from-font underline-offset-2;
 }
 
 h1 {
@@ -67,7 +67,7 @@ h1 {
   .header-shadow-after::after {
     content: '';
 
-    @apply absolute w-full h-full top-0 right-0 z-10;
+    @apply absolute top-0 right-0 z-10 w-full h-full;
     @apply bg-cover;
   }
 
@@ -77,12 +77,12 @@ h1 {
     @apply p-4;
     @apply inline-flex justify-center;
     @apply bg-white;
-    @apply bg-contain bg-no-repeat bg-center bg-origin-content;
+    @apply bg-center bg-no-repeat bg-contain bg-origin-content;
   }
 
   .small-logo .partner-logo {
     @apply w-32; 
-    @apply p-2; 
+    @apply p-4; 
   }
 }
 

@@ -1,26 +1,16 @@
 import { createKysely } from '@vercel/postgres-kysely'
+import { sql } from 'kysely'
 
 import { teamRegistrationConfirmationMail } from '~/server/mail_structure/teamRegistrationConfirmationMail'
 import { teamRegistrationInformationMail } from '~/server/mail_structure/teamRegistrationInformationMail'
-import { isValidEmail, isValidPhone, isValidPostalCode } from '~/server/utils/formValidator'
 import { getMailTransporter } from '~/server/utils/mailer'
 
 import type { Database } from '~/types/db/Database'
 
-export enum RegistrationStatus {
-  CorrectAdding,
-  InvalidTeamName,
-  InvalidCaptain,
-  InvalidParticipant,
-  InvalidRobot,
-  MissingConsent,
-  DatabaseFail
-}
-
 const shirtSizes = ['S', 'M', 'L', 'XL', 'XXL']
 
 export interface RegistrationResponse {
-  statusCode: RegistrationStatus
+  statusCode: number
   message?: string
 }
 
@@ -72,11 +62,11 @@ function checkCaptainData(captain: Captain): boolean {
     return false
   }
 
-  if (!(captain.email && captain.email.length > 0 && captain.email.length <= 50 && isValidEmail(captain.email))) {
+  if (!(captain.email && captain.email.length > 0 && captain.email.length <= 50)) {
     return false
   }
 
-  if (!(captain.phone && captain.phone.length > 0 && captain.phone.length <= 50 && isValidPhone(captain.phone))) {
+  if (!(captain.phone && captain.phone.length > 0 && captain.phone.length <= 50)) {
     return false
   }
 
@@ -84,7 +74,7 @@ function checkCaptainData(captain: Captain): boolean {
     return false
   }
 
-  if (!(captain.postalCode && captain.postalCode.length === 6 && isValidPostalCode(captain.postalCode))) {
+  if (!(captain.postalCode && captain.postalCode.length === 6)) {
     return false
   }
 
@@ -137,7 +127,7 @@ function checkRobotsData(robots: Robot[]): boolean {
   return true
 }
 
-async function add2Database(record: RegistrationRequest): Promise<RegistrationResponse> {
+async function add2Database(record: RegistrationRequest) {
   // TODO: ZMIENIĆ NA TRANSAKCJE WRAZ Z ZMIANA BIBLIOTEKI
   const db = createKysely<Database>()
   try {
@@ -193,69 +183,79 @@ async function add2Database(record: RegistrationRequest): Promise<RegistrationRe
     }
 
     for (const robot of record.robots) {
+      const nextRobotNo = await sql<{ fn_get_next_robot_no: number }>`SELECT robocomp.fn_get_next_robot_no()`.execute(
+        db
+      )
+
       await db
         .insertInto('robocomp.robot' as any)
         .values({
           name: robot.name,
-          // TODO: use stored function/default column value
-          robot_no: 1000 + teamId + Math.floor(Math.random() * 1000),
+          robot_no: nextRobotNo.rows[0].fn_get_next_robot_no,
           team_id: teamId,
           competition: robot.category
         })
         .execute()
     }
 
-    return { statusCode: RegistrationStatus.CorrectAdding }
+    return { statusCode: 200, message: 'OK' }
   } catch (error) {
     console.error(error)
-    return { statusCode: RegistrationStatus.DatabaseFail }
+    return createError({ statusCode: 500, message: 'db-error' })
   }
 }
 
 export default defineEventHandler(async (event): Promise<RegistrationResponse> => {
-  // Parsujemy body JSON z żądania POST
   const body = (await readBody(event)) as RegistrationRequest
 
   if (!(body.teamName && body.teamName.length > 0 && body.teamName.length <= 50)) {
-    return {
-      statusCode: RegistrationStatus.InvalidTeamName
-    }
+    return createError({
+      statusCode: 400,
+      message: 'invalid-team-name'
+    })
   }
 
   if (!checkCaptainData(body.captain)) {
-    return {
-      statusCode: RegistrationStatus.InvalidCaptain
-    }
+    return createError({
+      statusCode: 400,
+      message: 'invalid-captain-data'
+    })
   }
 
   if (!checkParticipantsData(body.participants)) {
-    return {
-      statusCode: RegistrationStatus.InvalidParticipant
-    }
+    return createError({
+      statusCode: 400,
+      message: 'invalid-participant-data'
+    })
   }
 
   if (!checkRobotsData(body.robots)) {
-    return {
-      statusCode: RegistrationStatus.InvalidRobot
-    }
+    return createError({
+      statusCode: 400,
+      message: 'invalid-robot-data'
+    })
   }
   if (!body.agreeTerms || !body.agreePrivacy) {
-    return {
-      statusCode: RegistrationStatus.MissingConsent
-    }
+    return createError({
+      statusCode: 400,
+      message: 'missing-consent'
+    })
   }
 
   const response = await add2Database(body)
-  if (response.statusCode !== RegistrationStatus.CorrectAdding) {
+
+  if (response.statusCode !== 200) {
     return response
   }
+
   try {
     const mailer = getMailTransporter()
     await teamRegistrationConfirmationMail(mailer, body.captain.email, body)
     await teamRegistrationInformationMail(mailer, process.env.REGISTRATION_MAIL || '', body)
+
     return response
   } catch (error) {
     console.error(error)
-    return { statusCode: RegistrationStatus.DatabaseFail }
+    return createError({ statusCode: 500, message: 'db-error' })
   }
 })

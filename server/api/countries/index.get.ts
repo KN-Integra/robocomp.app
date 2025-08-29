@@ -14,11 +14,11 @@ export interface CountriesResponse {
 export default defineEventHandler(async (): Promise<CountriesResponse | H3Error> => {
   const kyselyDb = createKysely<Database>()
   try {
-    const countries = (await kyselyDb
-      .selectFrom('robocomp.countries' as any)
+    const countries = await kyselyDb
+      .selectFrom('robocomp.country' as any)
       .orderBy('name')
       .selectAll()
-      .execute())
+      .execute()
     await kyselyDb.destroy()
     return {
       statusCode: 200,

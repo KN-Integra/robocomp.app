@@ -50,6 +50,7 @@ export interface CompetitionView {
   name: string
   scoring_method: string
   color: string
+  display_name: string
 }
 
 export type CompetitionViewRow = Selectable<CompetitionView>

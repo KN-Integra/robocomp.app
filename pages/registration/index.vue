@@ -44,19 +44,6 @@ const countries = ref<{ name: string; value: string }[]>([])
 const agreePrivacy = ref(false)
 const agreeTerms = ref(false)
 
-interface ParticipantError {
-  name: string | undefined
-  surname: string | undefined
-}
-
-const participantsError = ref<ParticipantError[]>([])
-
-interface RobotsError {
-  name: string | undefined
-}
-
-const robotsError = ref<RobotsError[]>([])
-
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
 watch(teamName, (newVal) => {
@@ -93,50 +80,6 @@ watch(teamName, (newVal) => {
     }
   }, 500)
 })
-
-watch(
-  () => JSON.stringify(participants.value),
-  (_) => {
-    participantsError.value = []
-    const tempList: ParticipantError[] = []
-    participants.value.forEach((val: Participant) => {
-      const error: ParticipantError = { name: undefined, surname: undefined }
-      if (val.name.length === 0) {
-        error.name = ''
-      }
-      if (val.name.length > 50) {
-        error.name = 'Imię zawodnika musi mieć długość mniejszą niż 50 liter.'
-      }
-      if (val.surname.length === 0) {
-        error.surname = ''
-      }
-      if (val.surname.length > 50) {
-        error.surname = 'Nazwisko zawodnika musi mieć długość mniejszą niż 50 liter.'
-      }
-      tempList.push(error)
-    })
-    participantsError.value = tempList
-  }
-)
-
-watch(
-  () => JSON.stringify(robots.value),
-  (_) => {
-    robotsError.value = []
-    const tempList: RobotsError[] = []
-    robots.value.forEach((val: Robot) => {
-      const error: RobotsError = { name: undefined }
-      if (val.name.length === 0) {
-        error.name = ''
-      }
-      if (val.name.length > 100) {
-        error.name = 'Nazwa robota musi mieć długość mniejszą niż 100 liter.'
-      }
-      tempList.push(error)
-    })
-    robotsError.value = tempList
-  }
-)
 
 async function checkTeamNameExist(name: string) {
   try {
@@ -215,6 +158,16 @@ const validations = {
     message: ref(),
     errorMessage: 'Podaj miasto kapitana'
   },
+  captainCountry: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj kraj pochodzenia kapitana'
+  },
+  captainShirt: {
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj rozmiar koszulki kapitana'
+  },
   participantFirstName: Array.from({ length: maxParticipants }, () => ({
     status: ref<'success' | 'error' | ''>(''),
     message: ref(),
@@ -225,10 +178,20 @@ const validations = {
     message: ref(),
     errorMessage: 'Podaj nazwisko zawodnika'
   })),
+  participantShirt: Array.from({ length: maxParticipants }, () => ({
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Podaj rozmiar koszulki zawodnika'
+  })),
   robotName: Array.from({ length: maxRobots }, () => ({
     status: ref<'success' | 'error' | ''>(''),
     message: ref(),
     errorMessage: 'Podaj nazwę robota'
+  })),
+  robotCategory: Array.from({ length: maxRobots }, () => ({
+    status: ref<'success' | 'error' | ''>(''),
+    message: ref(),
+    errorMessage: 'Wybierz kategorię robota'
   })),
   agreePrivacy: {
     status: ref<'success' | 'error' | ''>(''),
@@ -278,16 +241,15 @@ async function submitForm() {
   for (const el of $formRef.value.elements) {
     const element = el as HTMLFormElement
 
-    const [key, idx] = element.name.split('-').map(([k, i]) => [k, Number(i)]) as unknown as [
-      keyof typeof validations,
-      number
-    ]
+    const splitName = element.name.split('-')
+    const key = splitName[0] as keyof typeof validations
+    const idx = Number(splitName[1])
 
     if (![...formData.keys()].includes(element.name)) {
       continue
     }
 
-    console.info(element, element.value, element.checkValidity())
+    console.info(`Validating ${element.name} with value: ${element.value}`, validations[key], key)
 
     if (!element.value && validations[key]) {
       element.focus()
@@ -301,26 +263,69 @@ async function submitForm() {
         validations[key].status.value = 'error'
         validations[key].message.value = validations[key].errorMessage
       }
+
+      return
     }
+  }
 
-    if (!element.checkValidity()) {
-      console.debug(element.validity)
+  if (!captain.shirtSize) {
+    const element = document.querySelector('div[name="captainShirtSize"] select') as HTMLSelectElement
+    element.focus()
+    element.setCustomValidity(validations.captainShirt.errorMessage)
+    validations.captainShirt.status.value = 'error'
+    validations.captainShirt.message.value = validations.captainShirt.errorMessage
+
+    return
+  }
+
+  if (!captain.country) {
+    const element = document.querySelector('div[name="captainCountry"] select') as HTMLSelectElement
+    element.focus()
+    element.setCustomValidity(validations.captainCountry.errorMessage)
+    validations.captainCountry.status.value = 'error'
+    validations.captainCountry.message.value = validations.captainCountry.errorMessage
+
+    return
+  }
+
+  for (const el of document.querySelectorAll('div[name^="participant"] select')) {
+    const element = el as HTMLSelectElement
+
+    if (!element.value) {
       element.focus()
+      element.setCustomValidity(validations.participantShirt[Number(element.name.split('-')[1])].errorMessage)
+      validations.participantShirt[Number(element.name.split('-')[1])].status.value = 'error'
+      validations.participantShirt[Number(element.name.split('-')[1])].message.value = validations.participantShirt[Number(element.name.split('-')[1])].errorMessage
 
-      if (Array.isArray(validations[key])) {
-        element.setCustomValidity(validations[key][idx].errorMessage)
-        validations[key][idx].status.value = 'error'
-        validations[key][idx].message.value = element.validationMessage
-      } else {
-        element.setCustomValidity(validations[key].errorMessage)
-        validations[key].status.value = 'error'
-        validations[key].message.value = element.validationMessage
-      }
+      return
+    }
+  }
+
+  if (!$formRef.value.querySelectorAll('input[name^="robot"]').length) {
+    addRobot()
+    alert('Proszę dodać co najmniej jednego robota')
+
+    const element: HTMLInputElement | null = $formRef.value.querySelector('input[name^="robot"]')
+    if (element) element.focus()
+
+    return
+  }
+
+  for (const el of document.querySelectorAll('div[name^="robot"] select')) {
+    const element = el as HTMLSelectElement
+
+    if (!element.value) {
+      element.focus()
+      element.setCustomValidity(validations.robotCategory[Number(element.name.split('-')[1])].errorMessage)
+      validations.robotCategory[Number(element.name.split('-')[1])].status.value = 'error'
+      validations.robotCategory[Number(element.name.split('-')[1])].message.value = validations.participantShirt[Number(element.name.split('-')[1])].errorMessage
+
+      return
     }
   }
 
   if (!agreePrivacy.value) {
-    const element = document.querySelector('[name="agreePrivacy"] input') as HTMLInputElement
+    const element = document.querySelector('input[name="agreePrivacy"]') as HTMLInputElement
     element.focus()
     element.setCustomValidity(validations.agreePrivacy.errorMessage)
 
@@ -328,14 +333,12 @@ async function submitForm() {
   }
 
   if (!agreeTerms.value) {
-    const element = document.querySelector('[name="agreeTerms"] input') as HTMLInputElement
+    const element = document.querySelector('input[name="agreeTerms"]') as HTMLInputElement
     element.focus()
     element.setCustomValidity(validations.agreeTerms.errorMessage)
 
     return
   }
-
-  return
 
   const payload: RegistrationRequest = {
     teamName: teamName.value,
@@ -345,6 +348,8 @@ async function submitForm() {
     agreePrivacy: agreePrivacy.value,
     agreeTerms: agreeTerms.value
   }
+
+  console.info(payload)
 
   try {
     const res = await fetch('/api/registration', {
@@ -378,10 +383,14 @@ onMounted(async () => {
       throw new Error('No competition data found')
     }
 
-    categories.value = (data.competitions.map((element) => [element.name, element.name]) || []).map((v) => ({
-      value: v[1],
-      name: v[0]
-    }))
+    categories.value = (
+      data.competitions.filter((c) => c.scoring_method).map((element) => [element.display_name, element.name]) || []
+    )
+      .sort(([_dnA, nameA]: string[], [_dbB, nameB]: string[]) => nameA > nameB ? 1 : -1)
+      .map((v) => ({
+        value: v[1],
+        name: v[0]
+      }))
   } catch (error) {
     console.error('Error in loading robots categories:', error)
   }
@@ -403,18 +412,38 @@ onMounted(async () => {
 })
 </script>
 
+<style lang="css">
+.form-container .form-input > div {
+  @apply !bg-transparent border-none rounded-none;
+}
+
+.form-container .form-input input,
+.form-container .form-input select {
+  @apply bg-neutral-100 border border-neutral-300 focus:ring-0 rounded-md text-black placeholder:text-neutral-400;
+}
+
+.form-container .form-input span:not(.text-red-500) {
+  @apply text-black;
+}
+
+.form-container .form-input p {
+  @apply mb-2 !mt-0;
+}
+</style>
+
 <template>
-  <form ref="$formRef" class="container mx-auto px-4 py-8 max-w-4xl">
-    <h1 class="text-2xl font-bold mb-6">Formularz rejestracyjny</h1>
+  <form ref="$formRef" class="container max-w-4xl px-4 py-8 mx-auto form-container">
+    <h1 class="mb-6 text-2xl font-bold">Formularz rejestracyjny</h1>
 
     <div class="mb-4">
-      <label class="block font-semibold mb-1">Nazwa zespołu</label>
+      <label class="block mb-1 font-semibold">Nazwa zespołu</label>
       <fwb-input
         v-model="teamName"
         type="text"
         name="teamName"
         placeholder="Nazwa zespołu"
-        :validation-status="validations.teamName.status.value"
+        wrapper-class="form-input"
+        :validation-status="validations.teamName.status.value as any"
         :required="true"
         @change="resetValidation"
       >
@@ -430,13 +459,14 @@ onMounted(async () => {
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2">Kapitan</h2>
+      <h2 class="mb-2 font-semibold">Kapitan</h2>
       <fwb-input
         v-model="captain.name"
         type="text"
         name="captainFirstName"
         placeholder="Imię"
-        :validation-status="validations.captainFirstName.status.value"
+        wrapper-class="form-input"
+        :validation-status="validations.captainFirstName.status.value as any"
         :required="true"
         @change="resetValidation"
       >
@@ -455,7 +485,8 @@ onMounted(async () => {
         type="text"
         name="captainLastName"
         placeholder="Nazwisko"
-        :validation-status="validations.captainLastName.status.value"
+        wrapper-class="form-input"
+        :validation-status="validations.captainLastName.status.value as any"
         :required="true"
         @change="resetValidation"
       >
@@ -472,16 +503,28 @@ onMounted(async () => {
       <fwb-select
         v-model="captain.shirtSize"
         name="captainShirtSize"
-        class="select select-bordered w-full mb-2"
+        class="w-full mb-2 form-input"
         :options="shirtSizes"
-      />
+        placeholder="Wybierz rozmiar"
+        :validation-status="validations.captainShirt.status.value as any"
+      >
+        <template #validationMessage>
+          <span
+            class="text-xs font-bold"
+            :class="validations.captainShirt.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+          >
+            {{ validations.captainShirt.message.value }}
+          </span>
+        </template>
+      </fwb-select>
 
       <fwb-input
         v-model="captain.email"
         type="email"
         name="captainEmail"
         placeholder="Adres e-mail"
-        :validation-status="validations.captainEmail.status.value"
+        wrapper-class="form-input"
+        :validation-status="validations.captainEmail.status.value as any"
         :required="true"
         @change="resetValidation"
       >
@@ -500,7 +543,8 @@ onMounted(async () => {
         type="tel"
         name="captainPhone"
         placeholder="Telefon"
-        :validation-status="validations.captainPhone.status.value"
+        wrapper-class="form-input"
+        :validation-status="validations.captainPhone.status.value as any"
         :required="true"
         @change="resetValidation"
       >
@@ -514,14 +558,15 @@ onMounted(async () => {
         </template>
       </fwb-input>
 
-      <h3 class="font-medium mt-4 mb-2">Adres zamieszkania</h3>
+      <h3 class="mt-4 mb-2 font-medium">Adres zamieszkania</h3>
 
       <fwb-input
         v-model="captain.street"
         type="text"
         name="captainStreet"
         placeholder="Ulica i numer"
-        :validation-status="validations.captainStreet.status.value"
+        wrapper-class="form-input"
+        :validation-status="validations.captainStreet.status.value as any"
         :required="true"
         @change="resetValidation"
       >
@@ -541,7 +586,8 @@ onMounted(async () => {
           type="text"
           name="captainPostalCode"
           placeholder="Kod pocztowy"
-          :validation-status="validations.captainPostalCode.status.value"
+          wrapper-class="form-input"
+          :validation-status="validations.captainPostalCode.status.value as any"
           :required="true"
           @change="resetValidation"
         >
@@ -560,7 +606,8 @@ onMounted(async () => {
           type="text"
           name="captainCity"
           placeholder="Miejscowość"
-          :validation-status="validations.captainCity.status.value"
+          wrapper-class="form-input"
+          :validation-status="validations.captainCity.status.value as any"
           :required="true"
           @change="resetValidation"
         >
@@ -575,23 +622,35 @@ onMounted(async () => {
         </fwb-input>
       </div>
 
+      <div></div>
       <fwb-select
         v-model="captain.country"
         name="captainCountry"
-        class="select select-bordered w-full"
+        class="w-full form-input"
         :required="true"
         :options="countries"
-      />
+        placeholder="Wybierz kraj"
+        :validation-status="validations.captainCountry.status.value as any"
+      >
+        <template #validationMessage>
+          <span
+            class="text-xs font-bold"
+            :class="validations.captainCountry.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+          >
+            {{ validations.captainCountry.message.value }}
+          </span>
+        </template>
+      </fwb-select>
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2 w-full inline-flex items-center justify-between">
+      <h2 class="inline-flex items-center justify-between w-full mb-2 font-semibold">
         <span>Zawodnicy ({{ participants.length }} z 9 możliwych)</span>
 
         <fwb-button color="green" :disabled="participants.length + 1 >= maxParticipants" @click="addParticipant">
           <template #prefix>
             <lazy-client-only>
-              <fa-icon icon="fa-solid fa-plus" class="h-4 w-4" />
+              <fa-icon icon="fa-solid fa-plus" class="w-4 h-4" />
             </lazy-client-only>
           </template>
           Dodaj zawodnika
@@ -604,7 +663,8 @@ onMounted(async () => {
           type="text"
           :name="'participantFirstName-' + i"
           placeholder="Imię"
-          :validation-status="validations.participantFirstName[i].status.value"
+          wrapper-class="form-input"
+          :validation-status="validations.participantFirstName[i].status.value as any"
           :required="true"
           @change="resetValidation"
         >
@@ -625,7 +685,8 @@ onMounted(async () => {
           type="text"
           :name="'participantLastName-' + i"
           placeholder="Nazwisko"
-          :validation-status="validations.participantLastName[i].status.value"
+          wrapper-class="form-input"
+          :validation-status="validations.participantLastName[i].status.value as any"
           :required="true"
           @change="resetValidation"
         >
@@ -644,19 +705,32 @@ onMounted(async () => {
           :name="'participantShirtSize-' + i"
           :options="shirtSizes"
           :required="true"
-        />
-        <fwb-button color="red" @click="removeParticipant(i)">Usuń</fwb-button>
+          placeholder="Wybierz rozmiar koszulki"
+          class="form-input"
+          :validation-status="validations.participantShirt[i].status.value as any"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="validations.participantShirt[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+            >
+              {{ validations.participantShirt[i].message.value }}
+            </span>
+          </template>
+        </fwb-select>
+
+        <fwb-button color="red" @click="removeParticipant(i)" class="h-10">Usuń</fwb-button>
       </div>
     </div>
 
     <div class="mb-6">
-      <h2 class="font-semibold mb-2 w-full inline-flex items-center justify-between">
+      <h2 class="inline-flex items-center justify-between w-full mb-2 font-semibold">
         <span>Roboty ({{ robots.length }} z 5 możliwych)</span>
 
         <fwb-button color="green" :disabled="robots.length >= maxRobots" @click="addRobot">
           <template #prefix>
             <lazy-client-only>
-              <fa-icon icon="fa-solid fa-plus" class="h-4 w-4" />
+              <fa-icon icon="fa-solid fa-plus" class="w-4 h-4" />
             </lazy-client-only>
           </template>
 
@@ -670,7 +744,8 @@ onMounted(async () => {
           type="text"
           :name="'robotName-' + i"
           placeholder="Nazwa robota"
-          :validation-status="validations.robotName[i].status.value"
+          wrapper-class="form-input"
+          :validation-status="validations.robotName[i].status.value as any"
           :required="true"
           @change="resetValidation"
         >
@@ -684,23 +759,47 @@ onMounted(async () => {
           </template>
         </fwb-input>
 
-        <fwb-select v-model="robot.category" name="robotCategories[]" :options="categories" :required="true" />
+        <fwb-select
+          v-model="robot.category"
+          :name="'robotCategory-' + i"
+          :options="categories"
+          :required="true"
+          placeholder="Wybierz kategorię"
+          :validation-status="validations.robotCategory[i].status.value as any"
+          class="form-input"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="validations.robotCategory[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+            >
+              {{ validations.robotCategory[i].message.value }}
+            </span>
+          </template>
+        </fwb-select>
 
-        <fwb-button color="red" @click="removeRobot(i)">Usuń</fwb-button>
+        <fwb-button color="red" @click="removeRobot(i)" class="h-10">Usuń</fwb-button>
       </div>
     </div>
 
-    <div class="mb-4 flex items-center gap-2">
+    <div class="flex items-center gap-2 mb-4">
       <fwb-checkbox
         v-model="agreePrivacy"
         name="agreePrivacy"
         label="Wyrażam zgodę na przetwarzanie danych osobowych"
+        wrapper-class="form-input"
         :required="true"
       />
     </div>
 
-    <div class="mb-6 flex items-center gap-2">
-      <fwb-checkbox v-model="agreeTerms" name="agreeTerms" label="Akceptuję regulamin zawodów" :required="true" />
+    <div class="flex items-center gap-2 mb-6">
+      <fwb-checkbox
+        v-model="agreeTerms"
+        name="agreeTerms"
+        label="Akceptuję regulamin zawodów"
+        wrapper-class="form-input"
+        :required="true"
+      />
     </div>
 
     <fwb-button type="button" @click="submitForm">Zarejestruj zespół</fwb-button>
