@@ -1,5 +1,6 @@
 import * as schema from './Schema'
 import * as views from './Views'
+
 export interface Database {
   'team_participant': schema.TeamsParticipantsTable
   'team': schema.TeamTable
@@ -13,6 +14,7 @@ export interface Database {
   'schedule': schema.ScheduleTable
   'stage': schema.StagesTable
   'competition': schema.CompetitionsTable
+  'countries': schema.CountriesTable
 
   'teams_details': views.TeamsDetailsView
   'times_linefollower-enchanced': views.CompetitionTimesView

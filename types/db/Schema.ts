@@ -104,3 +104,8 @@ export interface StagesTable {
   name: string
   order: number
 }
+
+export interface CountriesTable {
+  code: string
+  name: string
+}

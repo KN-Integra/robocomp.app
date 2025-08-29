@@ -232,7 +232,7 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
     '@nuxt/image',
     '@vite-pwa/nuxt',
     '@nuxtjs/tailwindcss'
@@ -257,6 +257,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     META_API_KEY: process.env.META_API_KEY,
+    META_APP_ID: process.env.META_APP_ID,
+    META_APP_SECRET: process.env.META_APP_SECRET,
     META_GRAPH_ENDPOINT: process.env.META_GRAPH_ENDPOINT,
     META_GRAPH_VERSION: process.env.META_GRAPH_VERSION,
     ROBOCOMP_PAGE_ID: process.env.ROBOCOMP_PAGE_ID,
@@ -264,10 +266,17 @@ export default defineNuxtConfig({
     POSTGRES_USER: process.env.POSTGRES_USER,
     POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
     POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
+    SMTP_LOGIN: process.env.SMTP_LOGIN,
+    SMTP_PASS: process.env.SMTP_PASS,
+    REGISTRATION_MAIL: process.env.REGISTRATION_MAIL,
     public: {
       INTEGRA_API_URL: process.env.INTEGRA_API_URL
     }
   },
 
-  compatibilityDate: '2025-04-09'
+  compatibilityDate: '2025-04-09',
+
+  devtools: {
+    enabled: true
+  }
 })

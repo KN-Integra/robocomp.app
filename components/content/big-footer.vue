@@ -169,6 +169,20 @@ onMounted(() => {
 
           <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Fundacja InUnI</span>
         </span>
+
+        <span class="flex flex-col items-center">
+          <NuxtLink
+            to="https://www.facebook.com/polishroboticsgroup/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="partner-logo"
+            :style="`background-image: url('${imgPathPrefix}/logo/prg.svg')`"
+          >
+            <span class="sr-only">Polish Robotics Group </span>
+          </NuxtLink>
+
+          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Polish Robotics Group</span>
+        </span>
       </span>
     </div>
 
