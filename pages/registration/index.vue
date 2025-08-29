@@ -208,10 +208,9 @@ const validations = {
 function resetValidation(e: Event) {
   const target = e.target as HTMLFormElement
 
-  const [key, idx] = target.name.split('-').map(([k, i]) => [k, Number(i)]) as unknown as [
-    keyof typeof validations,
-    number
-  ]
+  const splitName = element.name.split('-')
+    const key = splitName[0] as keyof typeof validations
+    const idx = Number(splitName[1])
 
   if (!(key in validations)) {
     console.warn(`No validation found for key: ${key}`)
