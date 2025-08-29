@@ -11,7 +11,7 @@ export function isValidPhone(phone: string): boolean {
 export function isValidPostalCode(postalCode: string, countryCode: string = 'US'): boolean {
   // TODO: SPRAWDZIĆ CZY CZASAMI NIE TRZEBA TO USUNĄĆ BO RÓŻNE KRAJE RÓŻNY KOD POCZTOWY?
   const postalCodeRegexes: { [key: string]: RegExp } = {
-    // Default to Poland (US) if no country code is provided
+    // Default to US if no country code is provided
     // Poland: XX-XXX
     PL: /^[0-9]{2}-[0-9]{3}$/,
     // USA: 12345 or 12345-6789
