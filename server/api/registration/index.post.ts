@@ -130,7 +130,7 @@ function checkRobotsData(robots: Robot[]): boolean {
 }
 
 async function add2Database(record: RegistrationRequest) {
-  // TODO: ZMIENIĆ NA TRANSAKCJE WRAZ Z ZMIANA BIBLIOTEKI
+  // TODO: Change to transactions along with library change
   const db = createKysely<Database>()
   try {
     const team = await db
