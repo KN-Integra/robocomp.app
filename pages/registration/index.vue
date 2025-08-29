@@ -316,7 +316,7 @@ async function submitForm() {
       element.focus()
       element.setCustomValidity(validations.robotCategory[Number(element.name.split('-')[1])].errorMessage)
       validations.robotCategory[Number(element.name.split('-')[1])].status.value = 'error'
-      validations.robotCategory[Number(element.name.split('-')[1])].message.value = validations.participantShirt[Number(element.name.split('-')[1])].errorMessage
+      validations.robotCategory[Number(element.name.split('-')[1])].message.value = validations.robotCategory[Number(element.name.split('-')[1])].errorMessage
 
       return
     }
