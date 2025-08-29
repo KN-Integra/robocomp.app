@@ -266,6 +266,9 @@ export default defineNuxtConfig({
     POSTGRES_USER: process.env.POSTGRES_USER,
     POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
     POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
+    SMTP_LOGIN: process.env.SMTP_LOGIN,
+    SMTP_PASS: process.env.SMTP_PASS,
+    REGISTRATION_MAIL: process.env.REGISTRATION_MAIL,
     public: {
       INTEGRA_API_URL: process.env.INTEGRA_API_URL
     }

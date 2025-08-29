@@ -9,6 +9,8 @@ import type { Database } from '~/types/db/Database'
 
 const shirtSizes = ['S', 'M', 'L', 'XL', 'XXL']
 
+const runtimeConfig = useRuntimeConfig()
+
 export interface RegistrationResponse {
   statusCode: number
   message?: string
@@ -198,47 +200,52 @@ async function add2Database(record: RegistrationRequest) {
         .execute()
     }
 
-    return { statusCode: 200, message: 'OK' }
+    return { statusCode: 200, statusMessage: 'OK' }
   } catch (error) {
     console.error(error)
-    return createError({ statusCode: 500, message: 'db-error' })
+    return createError({ statusCode: 500, statusMessage: 'db-error' })
   }
 }
 
 export default defineEventHandler(async (event): Promise<RegistrationResponse> => {
   const body = (await readBody(event)) as RegistrationRequest
 
-  if (!(body.teamName && body.teamName.length > 0 && body.teamName.length <= 50)) {
+  if (!(body.agreeTerms && body.agreePrivacy)) {
+    console.error('Missing consent:', body)
+
     return createError({
       statusCode: 400,
-      message: 'invalid-team-name'
+      statusMessage: 'missing-consent'
+    })
+  }
+
+  if (!(body.teamName && body.teamName.length > 0 && body.teamName.length <= 50)) {
+    console.error('Invalid team name:', body.teamName)
+
+    return createError({
+      statusCode: 400,
+      statusMessage: 'invalid-team-name'
     })
   }
 
   if (!checkCaptainData(body.captain)) {
     return createError({
       statusCode: 400,
-      message: 'invalid-captain-data'
+      statusMessage: 'invalid-captain-data'
     })
   }
 
   if (!checkParticipantsData(body.participants)) {
     return createError({
       statusCode: 400,
-      message: 'invalid-participant-data'
+      statusMessage: 'invalid-participant-data'
     })
   }
 
   if (!checkRobotsData(body.robots)) {
     return createError({
       statusCode: 400,
-      message: 'invalid-robot-data'
-    })
-  }
-  if (!body.agreeTerms || !body.agreePrivacy) {
-    return createError({
-      statusCode: 400,
-      message: 'missing-consent'
+      statusMessage: 'invalid-robot-data'
     })
   }
 
@@ -251,11 +258,11 @@ export default defineEventHandler(async (event): Promise<RegistrationResponse> =
   try {
     const mailer = getMailTransporter()
     await teamRegistrationConfirmationMail(mailer, body.captain.email, body)
-    await teamRegistrationInformationMail(mailer, process.env.REGISTRATION_MAIL || '', body)
+    await teamRegistrationInformationMail(mailer, runtimeConfig.REGISTRATION_MAIL || '', body)
 
     return response
   } catch (error) {
     console.error(error)
-    return createError({ statusCode: 500, message: 'db-error' })
+    return createError({ statusCode: 500, statusMessage: 'db-error' })
   }
 })

@@ -232,10 +232,8 @@ async function submitForm() {
 
   const formData = new FormData($formRef.value)
 
-  console.info($formRef.value.elements)
-
   for (const k of formData.keys()) {
-    console.info(`${k}: ${formData.get(k)}`)
+    console.debug(`${k}: ${formData.get(k)}`)
   }
 
   for (const el of $formRef.value.elements) {
@@ -249,7 +247,7 @@ async function submitForm() {
       continue
     }
 
-    console.info(`Validating ${element.name} with value: ${element.value}`, validations[key], key)
+    console.debug(`Validating ${element.name} with value: ${element.value}`, validations[key], key)
 
     if (!element.value && validations[key]) {
       element.focus()
@@ -349,22 +347,19 @@ async function submitForm() {
     agreeTerms: agreeTerms.value
   }
 
-  console.info(payload)
-
   try {
-    const res = await fetch('/api/registration', {
+    const response = await $fetch<RegistrationResponse>('/api/registration', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload)
+      body: payload
     })
 
-    const data: RegistrationResponse = await res.json()
     await navigateTo({
       path: '/registration/finish',
       state: {
-        success: data.statusCode === 0,
+        success: response.statusCode === 200,
         teamName: teamName.value,
         email: captain.email
       }
