@@ -103,7 +103,7 @@ const links = [
   { name: 'Kontakt', link: '/blog/contact' },
   { name: 'O\xA0nas', link: '/blog/about' },
   { name: 'Galeria', link: '/blog/gallery' },
-  { name: 'Partnerzy', link: '/partners' },
+  { name: 'Partnerzy', link: '/blog/partners' },
   { name: 'Statystyki', link: '/blog/stats' },
   { name: 'Zespoły', link: '/blog/teams' },
   { name: 'Dokumentacja', link: '/docs' },
