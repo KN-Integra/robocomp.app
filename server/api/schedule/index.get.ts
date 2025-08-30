@@ -41,15 +41,15 @@ export default defineEventHandler(async (event): Promise<ScheduleResponse | H3Er
       .selectFrom('schedule')
       .innerJoin('competition', 'schedule.competition', 'competition.name')
       .select([
-        'id',
-        sql<string>`REPLACE(name, ' ' || CAST(${new Date().getFullYear()} AS VARCHAR(4)), '')`.as('name'),
-        'start_date',
-        'end_date',
-        'competition',
+        'schedule.id',
+        sql<string>`REPLACE(schedule.name, ' ' || CAST(${new Date().getFullYear()} AS VARCHAR(4)), '')`.as('name'),
+        'schedule.start_date',
+        'schedule.end_date',
+        'schedule.competition',
         'competition.display_name'
       ] as any)
-      .where('name' as any, 'like', '% ' + year)
-      .where('name' as any, 'not like', '%Jury%')
+      .where('schedule.name' as any, 'like', '% ' + year)
+      .where('schedule.name' as any, 'not like', '%Jury%')
       .execute()) as Schedule[]
 
     db.destroy()
