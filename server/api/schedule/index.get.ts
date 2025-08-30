@@ -1,8 +1,6 @@
 import { createKysely } from '@vercel/postgres-kysely'
 import { sql } from 'kysely'
 
-import { Competition } from '~/settings/constants'
-
 import type { H3Error } from 'h3'
 
 export interface Schedule {
@@ -39,13 +37,16 @@ export default defineEventHandler(async (event): Promise<ScheduleResponse | H3Er
 
   try {
     const schedules = (await db
-      .selectFrom('robocomp.schedule' as any)
+      .withSchema('robocomp')
+      .selectFrom('schedule')
+      .innerJoin('competition', 'schedule.competition', 'competition.name')
       .select([
         'id',
         sql<string>`REPLACE(name, ' ' || CAST(${new Date().getFullYear()} AS VARCHAR(4)), '')`.as('name'),
         'start_date',
         'end_date',
-        'competition'
+        'competition',
+        'competition.display_name'
       ] as any)
       .where('name' as any, 'like', '% ' + year)
       .where('name' as any, 'not like', '%Jury%')
@@ -58,7 +59,7 @@ export default defineEventHandler(async (event): Promise<ScheduleResponse | H3Er
       .toSorted((a, b) => b.competition!.localeCompare(a.competition!))
       .map((schedule) => ({
         key: schedule.competition,
-        name: Competition[schedule.competition as keyof typeof Competition],
+        name: schedule.display_name || schedule.competition,
         type: schedule.name.split(' ')[0]
       }))
 
@@ -71,9 +72,7 @@ export default defineEventHandler(async (event): Promise<ScheduleResponse | H3Er
       data: {
         results: schedules.map((schedule) => ({
           ...schedule,
-          name: schedule.competition
-            ? `${schedule.name.split(' ')[0]} ${Competition[schedule.competition as keyof typeof Competition]}`
-            : schedule.name
+          name: schedule.display_name ? `${schedule.name.split(' ')[0]} ${schedule.display_name}` : schedule.name
         })) as Schedule[],
         competitionNames: [...new Set(competitions.map((competition) => competition.name))],
         competitionKeys: [...new Set(competitions.map((competition) => competition.key!))],

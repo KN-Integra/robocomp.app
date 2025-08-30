@@ -1,8 +1,6 @@
 import { Pool, neonConfig } from '@neondatabase/serverless'
-import { Kysely, PostgresDialect, sql } from 'kysely'
+import { Kysely, PostgresDialect } from 'kysely'
 import ws from 'ws'
-
-import { Competition } from '~/settings/constants'
 
 import type { NuxtError } from '@nuxt/types'
 import type { Database } from '~/types/db/Database'
