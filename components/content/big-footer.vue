@@ -84,16 +84,16 @@ onMounted(() => {
 <template>
   <div
     v-if="partners"
-    class="big-footer flex flex-col items-center gap-8 py-8 z-0"
+    class="z-0 flex flex-col items-center gap-8 py-8 big-footer"
     :class="{
       'small-logo': $props.logoSize === 'small',
       'large-logo': $props.logoSize === 'large'
     }"
   >
     <div class="flex flex-col items-center gap-8">
-      <div class="primary-header mt-6">Organizatorzy</div>
+      <div class="mt-6 primary-header">Organizatorzy</div>
 
-      <span class="inline-flex gap-8 flex-wrap justify-center">
+      <span class="inline-flex flex-wrap justify-center gap-8">
         <span class="flex flex-col items-center">
           <NuxtLink
             to="https://www.agh.edu.pl/"
@@ -105,8 +105,8 @@ onMounted(() => {
             <span class="sr-only">Akademia Górniczo-Hutnicza</span>
           </NuxtLink>
 
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-lg">Akademia</span>
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-lg">Górniczo-Hutnicza</span>
+          <span v-if="$props.logoSize !== 'small'" class="text-lg font-bold">Akademia</span>
+          <span v-if="$props.logoSize !== 'small'" class="text-lg font-bold">Górniczo-Hutnicza</span>
         </span>
 
         <span class="flex flex-col items-center">
@@ -121,9 +121,9 @@ onMounted(() => {
           </NuxtLink>
 
           <span v-if="$props.logoSize !== 'small'" class="text-lg">Wydział</span>
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-sm"> Elektrotechniki, </span>
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-sm"> Automatyki, Informatyki </span>
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-sm"> i Inżynierii Biomedycznej </span>
+          <span v-if="$props.logoSize !== 'small'" class="text-sm font-bold"> Elektrotechniki, </span>
+          <span v-if="$props.logoSize !== 'small'" class="text-sm font-bold"> Automatyki, Informatyki </span>
+          <span v-if="$props.logoSize !== 'small'" class="text-sm font-bold"> i Inżynierii Biomedycznej </span>
         </span>
 
         <span class="flex flex-col items-center">
@@ -138,7 +138,7 @@ onMounted(() => {
           </NuxtLink>
 
           <span v-if="$props.logoSize !== 'small'" class="text-lg">Katedra</span>
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Automatyki i Robotyki</span>
+          <span v-if="$props.logoSize !== 'small'" class="text-xl font-bold">Automatyki i Robotyki</span>
         </span>
 
         <span class="flex flex-col items-center">
@@ -153,7 +153,7 @@ onMounted(() => {
           </NuxtLink>
 
           <span v-if="$props.logoSize !== 'small'" class="text-lg">Koło Naukowe</span>
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">INTEGRA</span>
+          <span v-if="$props.logoSize !== 'small'" class="text-xl font-bold">INTEGRA</span>
         </span>
 
         <span class="flex flex-col items-center">
@@ -167,7 +167,21 @@ onMounted(() => {
             <span class="sr-only">Fundacja InUnI</span>
           </NuxtLink>
 
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Fundacja InUnI</span>
+          <span v-if="$props.logoSize !== 'small'" class="text-xl font-bold">Fundacja InUnI</span>
+        </span>
+
+        <span class="flex flex-col items-center">
+          <NuxtLink
+            to="https://drone.agh.edu.pl/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="partner-logo"
+            :style="`background-image: url('${imgPathPrefix}/logo/agh-drone-engineering.png')`"
+          >
+            <span class="sr-only">AGH Drone Engineering</span>
+          </NuxtLink>
+
+          <span v-if="$props.logoSize !== 'small'" class="text-xl font-bold">AGH Drone Engineering</span>
         </span>
 
         <span class="flex flex-col items-center">
@@ -178,19 +192,19 @@ onMounted(() => {
             class="partner-logo"
             :style="`background-image: url('${imgPathPrefix}/logo/prg.svg')`"
           >
-            <span class="sr-only">Polish Robotics Group </span>
+            <span class="sr-only">Polish Robotics Group</span>
           </NuxtLink>
 
-          <span v-if="$props.logoSize !== 'small'" class="font-bold text-xl">Polish Robotics Group</span>
+          <span v-if="$props.logoSize !== 'small'" class="text-xl font-bold">Polish Robotics Group</span>
         </span>
       </span>
     </div>
 
     <div v-for="(partnerList, type) in partners" :key="type">
       <div v-if="partnerList.length" class="flex flex-col items-center gap-8">
-        <div class="primary-header mt-6">{{ TypeToDisplay[type as keyof typeof TypeToDisplay] }}</div>
+        <div class="mt-6 primary-header">{{ TypeToDisplay[type as keyof typeof TypeToDisplay] }}</div>
 
-        <span class="inline-flex gap-8 flex-wrap justify-center">
+        <span class="inline-flex flex-wrap justify-center gap-8">
           <span v-for="partner in partnerList" :key="partner.internalName" class="flex flex-col items-center">
             <NuxtLink
               :to="$props.linkType === 'internal' ? `/partners/${partner.internalName}` : partner.url"
@@ -204,14 +218,14 @@ onMounted(() => {
 
             <span
               v-if="$props.logoSize !== 'small' || type === 'honorary'"
-              class="font-bold text-xl text-center text-wrap w-48"
+              class="w-48 text-xl font-bold text-center text-wrap"
               v-html="partner.name"
             ></span>
           </span>
         </span>
       </div>
 
-      <div v-else class="-mt-8">aa</div>
+      <div v-else class="-mt-8">Ładowanie...</div>
     </div>
   </div>
 </template>
