@@ -48,7 +48,7 @@ export default defineEventHandler(async (event): Promise<ScheduleResponse | H3Er
         'schedule.competition',
         'competition.display_name'
       ] as any)
-      .where('schedule.name' as any, 'like', '% ' + year)
+      .where(sql<boolean>`DATE_PART('year', schedule.start_date) = ${year}`)
       .where('schedule.name' as any, 'not like', '%Jury%')
       .execute()) as Schedule[]
 
