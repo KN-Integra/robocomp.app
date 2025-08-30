@@ -99,18 +99,22 @@ export default defineEventHandler(async (event): Promise<StatsResponse | NuxtErr
               .withSchema('robocomp')
               .selectFrom('robot')
               .innerJoin('competition', 'robot.competition', 'competition.name')
-              .select(({ fn }) => [
-                sql`competition.name as competition`,
-                fn.countAll().as('count'),
-                'competition.color'
-              ])
-              .groupBy(['competition.name', 'competition.color'])
-              .orderBy('competition.name')
+              .select(
+                ({ fn }) =>
+                  [
+                    'competition.name',
+                    'competition.display_name',
+                    'competition.color',
+                    fn.countAll().as('count')
+                  ] as any
+              )
+              .groupBy(['competition.name', 'competition.display_name', 'competition.color'])
+              .orderBy('competition.display_name')
               .where('robot.year', '=', Number(year))
               .execute()) || []
           ).map((row) => ({
             ...row,
-            competition: Competition[row.competition as keyof typeof Competition]
+            competition: row.display_name || row.name
           }))
           break
 
