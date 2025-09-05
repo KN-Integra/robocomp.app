@@ -105,7 +105,7 @@ const links = [
   { name: 'Galeria', link: '/blog/gallery' },
   { name: 'Partnerzy', link: '/blog/partners' },
   { name: 'Statystyki', link: '/blog/stats' },
-  { name: 'Zespoły', link: '/blog/teams' },
+  // { name: 'Zespoły', link: '/blog/teams' },
   { name: 'Dokumentacja', link: '/docs' },
   { name: 'Archiwum', link: '/archive' }
 ]
@@ -184,3 +184,4 @@ onBeforeUnmount(() => {
   transform: translateX(0);
 }
 </style>
+
