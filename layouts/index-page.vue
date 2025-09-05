@@ -18,7 +18,7 @@
 
           <NuxtLink
             class="rounded-full bg-blue-500 hover:bg-blue-600 px-8 py-4 self-center uppercase text-white tracking-[.15rem]"
-            to="http://registration.robocomp.info"
+            to="/registration"
             target="_blank"
           >
             Dołącz do nas
