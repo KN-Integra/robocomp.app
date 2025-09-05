@@ -11,15 +11,14 @@
         <div class="w-full md:w-1/2 flex flex-col slide-right">
           <NuxtImg src="/img/landing-page/landing-logo.webp" class="w-full" alt="Landing logo" />
 
-          <span class="px-3 py-10 whitespace-pre-wrap text-ellipsis text-white"
-            >Festiwal robotyki ROBOCOMP to inicjatywa Koła Naukowego Integra. Główną atrakcją będą zawody robotów oraz
+          <span class="px-3 py-10 whitespace-pre-wrap text-ellipsis text-white">
+            Festiwal robotyki ROBOCOMP to inicjatywa Koła Naukowego Integra. Główną atrakcją będą zawody robotów oraz
             pokazy firm związanych z robotyką, automatyką i elektroniką.
           </span>
 
           <NuxtLink
             class="rounded-full bg-blue-500 hover:bg-blue-600 px-8 py-4 self-center uppercase text-white tracking-[.15rem]"
             to="/registration"
-            target="_blank"
           >
             Dołącz do nas
           </NuxtLink>
@@ -41,7 +40,6 @@
 #bckg-smear {
   @apply bg-[url('/img/landing-page/bckg-smear.svg')] bg-cover;
 }
-
 
 .slide-up {
   opacity: 0;
