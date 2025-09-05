@@ -4,6 +4,7 @@ import { sql } from 'kysely'
 import { teamRegistrationConfirmationMail } from '~/server/mail_structure/teamRegistrationConfirmationMail'
 import { teamRegistrationInformationMail } from '~/server/mail_structure/teamRegistrationInformationMail'
 import { getMailTransporter } from '~/server/utils/mailer'
+import { isValidPostalCode } from '~/server/utils/formValidator'
 
 import type { Database } from '~/types/db/Database'
 
@@ -60,7 +61,7 @@ function checkCaptainData(captain: Captain): boolean {
     return false
   }
 
-  if (!(captain.shirtSize && shirtSizes.includes(captain.shirtSize))) {
+  if (shirtSizes.includes(captain.shirtSize)) {
     return false
   }
 
@@ -76,7 +77,7 @@ function checkCaptainData(captain: Captain): boolean {
     return false
   }
 
-  if (!(captain.postalCode && captain.postalCode.length === 6)) {
+  if (captain.country?.length === 2) {
     return false
   }
 
@@ -84,7 +85,7 @@ function checkCaptainData(captain: Captain): boolean {
     return false
   }
 
-  return captain.country !== undefined && captain.country.length === 2
+  return isValidPostalCode(captain.postalCode, captain.country.toUpperCase()) 
 }
 
 function checkParticipantsData(participants: Participant[]): boolean {
