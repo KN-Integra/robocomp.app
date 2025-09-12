@@ -23,12 +23,10 @@ const { status } = useLazyAsyncData('competitions-chart', async () => {
     return null
   }
 
-  console.info($route, $route.path, $route.query)
-
   const response = await $fetch<StatsResponse>('/api/stats', {
     query: {
       types: ['competitions'],
-      year: new Date().getFullYear().toString()
+      year: $route.params.year || new Date().getFullYear().toString()
     }
   })
 
