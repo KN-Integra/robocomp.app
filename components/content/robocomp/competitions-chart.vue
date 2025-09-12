@@ -2,6 +2,8 @@
 import { H3Error } from 'h3'
 import { Chart } from 'vue-chartjs'
 
+const $route = useRoute()
+
 import CHART_CONFIG from '~/settings/charts/competitions.chart'
 
 import type { StatsResponse } from '~/server/api/stats/index.get'
@@ -20,6 +22,8 @@ const { status } = useLazyAsyncData('competitions-chart', async () => {
   if (import.meta.server) {
     return null
   }
+
+  console.info($route, $route.path, $route.query)
 
   const response = await $fetch<StatsResponse>('/api/stats', {
     query: {
