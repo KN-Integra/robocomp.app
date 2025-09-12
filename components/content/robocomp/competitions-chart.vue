@@ -23,7 +23,8 @@ const { status } = useLazyAsyncData('competitions-chart', async () => {
 
   const response = await $fetch<StatsResponse>('/api/stats', {
     query: {
-      types: ['competitions']
+      types: ['competitions'],
+      year: new Date().getFullYear().toString()
     }
   })
 
