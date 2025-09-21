@@ -15,6 +15,8 @@ export default defineEventHandler(async (event): Promise<IsExistTeamResponse | H
   const query = getQuery(event)
 
   const name = query.name
+  const year = query.year ? Number(query.year) : new Date().getFullYear()
+  
   if (!name || typeof name !== 'string') {
     throw createError({
       statusCode: 400,
@@ -26,6 +28,7 @@ export default defineEventHandler(async (event): Promise<IsExistTeamResponse | H
       .selectFrom('robocomp.team' as any)
       .select(['id'])
       .where('name', '=', name)
+      .where('year', '=', year)
       .limit(1)
       .execute()
 
