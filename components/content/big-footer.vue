@@ -29,7 +29,7 @@ enum TypeToDisplay {
 }
 
 const { status, data: partners } = useAsyncData<Record<string, IPartner[]>>('partners', async () => {
-  const data = await $fetch(imgPathPrefix.value + '/partners/partners-list.txt')
+  const data = await $fetch(imgPathPrefix.value + '/blog/partners/partners-list.txt')
 
   if (!data) {
     return {
@@ -207,7 +207,7 @@ onMounted(() => {
         <span class="inline-flex flex-wrap justify-center gap-8">
           <span v-for="partner in partnerList" :key="partner.internalName" class="flex flex-col items-center">
             <NuxtLink
-              :to="$props.linkType === 'internal' ? `/partners/${partner.internalName}` : partner.url"
+              :to="$props.linkType === 'internal' ? `/blog/partners/${partner.internalName}` : partner.url"
               :target="$props.linkType === 'internal' ? '_self' : '_blank'"
               rel="noopener noreferrer"
               class="partner-logo"
@@ -218,7 +218,7 @@ onMounted(() => {
 
             <span
               v-if="$props.logoSize !== 'small' || type === 'honorary'"
-              class="w-48 text-xl font-bold text-center text-wrap"
+              class="w-48 mt-2 text-xl font-bold text-center text-wrap"
               v-html="partner.name"
             ></span>
           </span>
