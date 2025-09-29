@@ -29,7 +29,7 @@ enum TypeToDisplay {
 }
 
 const { status, data: partners } = useAsyncData<Record<string, IPartner[]>>('partners', async () => {
-  const data = await $fetch(imgPathPrefix.value + '/partners/partners.txt')
+  const data = await $fetch(imgPathPrefix.value + '/partners/partners-list.txt')
 
   if (!data) {
     return {
