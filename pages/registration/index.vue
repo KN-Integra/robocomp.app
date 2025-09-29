@@ -4,7 +4,7 @@ import { FwbButton, FwbInput, FwbSelect, FwbCheckbox } from 'flowbite-vue'
 import type { IsExistTeamResponse } from '~/server/api/isExistTeam/index.get'
 import type { RegistrationRequest, RegistrationResponse } from '~/server/api/registration/index.post'
 
-import { isValidEmail, isValidPhone, isValidPostalCode } from '~/server/utils/formValidator'
+import { REGISTRATION_END_DATE } from '~/settings/constants'
 
 interface Participant {
   name: string
@@ -426,376 +426,384 @@ onMounted(async () => {
 </style>
 
 <template>
-  <form ref="$formRef" class="container max-w-4xl px-4 py-8 mx-auto form-container">
-    <h1 class="mb-6 text-2xl font-bold">Formularz rejestracyjny</h1>
-
-    <div class="mb-4">
-      <label class="block mb-1 font-semibold">Nazwa zespołu</label>
-      <fwb-input
-        v-model="teamName"
-        type="text"
-        name="teamName"
-        placeholder="Nazwa zespołu"
-        wrapper-class="form-input"
-        :validation-status="validations.teamName.status.value as any"
-        :required="true"
-        @change="resetValidation"
-      >
-        <template #validationMessage>
-          <span
-            class="text-xs font-bold"
-            :class="validations.teamName.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
-          >
-            {{ validations.teamName.message.value }}
-          </span>
-        </template>
-      </fwb-input>
+  <div class="container max-w-4xl px-4 py-8 mx-auto">
+    <h1 class="mb-2 text-2xl font-bold">Formularz rejestracyjny</h1>
+    <div v-if="new Date() > new Date(REGISTRATION_END_DATE)" class="p-4 mb-6 text-red-800 bg-red-200 border border-red-300 rounded">
+      <h2 class="mb-2 text-xl font-bold">Rejestracja została zakończona</h2>
+      <p>Rejestracja na Festiwal Robotyki ROBOCOMP 2025 została zakończona. Dziękujemy za zainteresowanie i zapraszamy do udziału w przyszłych edycjach!</p>
     </div>
 
-    <div class="mb-6">
-      <h2 class="mb-2 font-semibold">Kapitan</h2>
-      <fwb-input
-        v-model="captain.name"
-        type="text"
-        name="captainFirstName"
-        placeholder="Imię"
-        wrapper-class="form-input"
-        :validation-status="validations.captainFirstName.status.value as any"
-        :required="true"
-        @change="resetValidation"
-      >
-        <template #validationMessage>
-          <span
-            class="text-xs font-bold"
-            :class="validations.captainFirstName.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
-          >
-            {{ validations.captainFirstName.message.value }}
-          </span>
-        </template>
-      </fwb-input>
+    <form v-else ref="$formRef" class="form-container" @submit.prevent="submitForm">
+      <h2 class="mb-6 text-xl italic">Rejestracja jest otwarta do <span class="underline">{{ new Date(REGISTRATION_END_DATE).toLocaleString() }}</span></h2>
 
-      <fwb-input
-        v-model="captain.surname"
-        type="text"
-        name="captainLastName"
-        placeholder="Nazwisko"
-        wrapper-class="form-input"
-        :validation-status="validations.captainLastName.status.value as any"
-        :required="true"
-        @change="resetValidation"
-      >
-        <template #validationMessage>
-          <span
-            class="text-xs font-bold"
-            :class="validations.captainLastName.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
-          >
-            {{ validations.captainLastName.message.value }}
-          </span>
-        </template>
-      </fwb-input>
-
-      <fwb-select
-        v-model="captain.shirtSize"
-        name="captainShirtSize"
-        class="w-full mb-2 form-input"
-        :options="shirtSizes"
-        placeholder="Wybierz rozmiar"
-        :validation-status="validations.captainShirt.status.value as any"
-      >
-        <template #validationMessage>
-          <span
-            class="text-xs font-bold"
-            :class="validations.captainShirt.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
-          >
-            {{ validations.captainShirt.message.value }}
-          </span>
-        </template>
-      </fwb-select>
-
-      <fwb-input
-        v-model="captain.email"
-        type="email"
-        name="captainEmail"
-        placeholder="Adres e-mail"
-        wrapper-class="form-input"
-        :validation-status="validations.captainEmail.status.value as any"
-        :required="true"
-        @change="resetValidation"
-      >
-        <template #validationMessage>
-          <span
-            class="text-xs font-bold"
-            :class="validations.captainEmail.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
-          >
-            {{ validations.captainEmail.message.value }}</span
-          >
-        </template>
-      </fwb-input>
-
-      <fwb-input
-        v-model="captain.phone"
-        type="tel"
-        name="captainPhone"
-        placeholder="Telefon"
-        wrapper-class="form-input"
-        :validation-status="validations.captainPhone.status.value as any"
-        :required="true"
-        @change="resetValidation"
-      >
-        <template #validationMessage>
-          <span
-            class="text-xs font-bold"
-            :class="validations.captainPhone.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
-          >
-            {{ validations.captainPhone.message.value }}
-          </span>
-        </template>
-      </fwb-input>
-
-      <h3 class="mt-4 mb-2 font-medium">Adres zamieszkania</h3>
-
-      <fwb-input
-        v-model="captain.street"
-        type="text"
-        name="captainStreet"
-        placeholder="Ulica i numer"
-        wrapper-class="form-input"
-        :validation-status="validations.captainStreet.status.value as any"
-        :required="true"
-        @change="resetValidation"
-      >
-        <template #validationMessage>
-          <span
-            class="text-xs font-bold"
-            :class="validations.captainStreet.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
-          >
-            {{ validations.captainStreet.message.value }}
-          </span>
-        </template>
-      </fwb-input>
-
-      <div class="flex gap-2 mb-2 *:w-full">
+      <div class="mb-4">
+        <label class="block mb-1 font-semibold">Nazwa zespołu</label>
         <fwb-input
-          v-model="captain.postalCode"
+          v-model="teamName"
           type="text"
-          name="captainPostalCode"
-          placeholder="Kod pocztowy"
+          name="teamName"
+          placeholder="Nazwa zespołu"
           wrapper-class="form-input"
-          :validation-status="validations.captainPostalCode.status.value as any"
+          :validation-status="validations.teamName.status.value as any"
           :required="true"
           @change="resetValidation"
         >
           <template #validationMessage>
             <span
               class="text-xs font-bold"
-              :class="validations.captainPostalCode.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              :class="validations.teamName.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
             >
-              {{ validations.captainPostalCode.message.value }}
-            </span>
-          </template>
-        </fwb-input>
-
-        <fwb-input
-          v-model="captain.city"
-          type="text"
-          name="captainCity"
-          placeholder="Miejscowość"
-          wrapper-class="form-input"
-          :validation-status="validations.captainCity.status.value as any"
-          :required="true"
-          @change="resetValidation"
-        >
-          <template #validationMessage>
-            <span
-              class="text-xs font-bold"
-              :class="validations.captainCity.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
-            >
-              {{ validations.captainCity.message.value }}
+              {{ validations.teamName.message.value }}
             </span>
           </template>
         </fwb-input>
       </div>
 
-      <div></div>
-      <fwb-select
-        v-model="captain.country"
-        name="captainCountry"
-        class="w-full form-input"
-        :required="true"
-        :options="countries"
-        placeholder="Wybierz kraj"
-        :validation-status="validations.captainCountry.status.value as any"
-      >
-        <template #validationMessage>
-          <span
-            class="text-xs font-bold"
-            :class="validations.captainCountry.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
-          >
-            {{ validations.captainCountry.message.value }}
-          </span>
-        </template>
-      </fwb-select>
-    </div>
-
-    <div class="mb-6">
-      <h2 class="inline-flex items-center justify-between w-full mb-2 font-semibold">
-        <span>Zawodnicy ({{ participants.length }} z 9 możliwych)</span>
-
-        <fwb-button color="green" :disabled="participants.length + 1 >= maxParticipants" @click="addParticipant">
-          <template #prefix>
-            <lazy-client-only>
-              <fa-icon icon="fa-solid fa-plus" class="w-4 h-4" />
-            </lazy-client-only>
-          </template>
-          Dodaj zawodnika
-        </fwb-button>
-      </h2>
-
-      <div v-for="(participant, i) in participants" :key="i" class="flex gap-2 mb-2">
+      <div class="mb-6">
+        <h2 class="mb-2 font-semibold">Kapitan</h2>
         <fwb-input
-          v-model="participant.name"
+          v-model="captain.name"
           type="text"
-          :name="'participantFirstName-' + i"
+          name="captainFirstName"
           placeholder="Imię"
           wrapper-class="form-input"
-          :validation-status="validations.participantFirstName[i].status.value as any"
+          :validation-status="validations.captainFirstName.status.value as any"
           :required="true"
           @change="resetValidation"
         >
           <template #validationMessage>
             <span
               class="text-xs font-bold"
-              :class="
-                validations.participantFirstName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'
-              "
+              :class="validations.captainFirstName.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
             >
-              {{ validations.participantFirstName[i].message.value }}
+              {{ validations.captainFirstName.message.value }}
             </span>
           </template>
         </fwb-input>
 
         <fwb-input
-          v-model="participant.surname"
+          v-model="captain.surname"
           type="text"
-          :name="'participantLastName-' + i"
+          name="captainLastName"
           placeholder="Nazwisko"
           wrapper-class="form-input"
-          :validation-status="validations.participantLastName[i].status.value as any"
+          :validation-status="validations.captainLastName.status.value as any"
           :required="true"
           @change="resetValidation"
         >
           <template #validationMessage>
             <span
               class="text-xs font-bold"
-              :class="validations.participantLastName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              :class="validations.captainLastName.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
             >
-              {{ validations.participantLastName[i].message.value }}
+              {{ validations.captainLastName.message.value }}
             </span>
           </template>
         </fwb-input>
 
         <fwb-select
-          v-model="participant.shirtSize"
-          :name="'participantShirtSize-' + i"
+          v-model="captain.shirtSize"
+          name="captainShirtSize"
+          class="w-full mb-2 form-input"
           :options="shirtSizes"
-          :required="true"
-          placeholder="Wybierz rozmiar koszulki"
-          class="form-input"
-          :validation-status="validations.participantShirt[i].status.value as any"
+          placeholder="Wybierz rozmiar"
+          :validation-status="validations.captainShirt.status.value as any"
         >
           <template #validationMessage>
             <span
               class="text-xs font-bold"
-              :class="validations.participantShirt[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              :class="validations.captainShirt.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
             >
-              {{ validations.participantShirt[i].message.value }}
+              {{ validations.captainShirt.message.value }}
             </span>
           </template>
         </fwb-select>
 
-        <fwb-button color="red" @click="removeParticipant(i)" class="h-10">Usuń</fwb-button>
-      </div>
-    </div>
-
-    <div class="mb-6">
-      <h2 class="inline-flex items-center justify-between w-full mb-2 font-semibold">
-        <span>Roboty ({{ robots.length }} z 5 możliwych)</span>
-
-        <fwb-button color="green" :disabled="robots.length >= maxRobots" @click="addRobot">
-          <template #prefix>
-            <lazy-client-only>
-              <fa-icon icon="fa-solid fa-plus" class="w-4 h-4" />
-            </lazy-client-only>
-          </template>
-
-          Dodaj robota
-        </fwb-button>
-      </h2>
-
-      <div v-for="(robot, i) in robots" :key="i" class="flex gap-2 mb-2">
         <fwb-input
-          v-model="robot.name"
-          type="text"
-          :name="'robotName-' + i"
-          placeholder="Nazwa robota"
+          v-model="captain.email"
+          type="email"
+          name="captainEmail"
+          placeholder="Adres e-mail"
           wrapper-class="form-input"
-          :validation-status="validations.robotName[i].status.value as any"
+          :validation-status="validations.captainEmail.status.value as any"
           :required="true"
           @change="resetValidation"
         >
           <template #validationMessage>
             <span
               class="text-xs font-bold"
-              :class="validations.robotName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              :class="validations.captainEmail.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
             >
-              {{ validations.robotName[i].message.value }}
-            </span>
+              {{ validations.captainEmail.message.value }}</span
+            >
           </template>
         </fwb-input>
 
-        <fwb-select
-          v-model="robot.category"
-          :name="'robotCategory-' + i"
-          :options="categories"
+        <fwb-input
+          v-model="captain.phone"
+          type="tel"
+          name="captainPhone"
+          placeholder="Telefon"
+          wrapper-class="form-input"
+          :validation-status="validations.captainPhone.status.value as any"
           :required="true"
-          placeholder="Wybierz kategorię"
-          :validation-status="validations.robotCategory[i].status.value as any"
-          class="form-input"
+          @change="resetValidation"
         >
           <template #validationMessage>
             <span
               class="text-xs font-bold"
-              :class="validations.robotCategory[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              :class="validations.captainPhone.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
             >
-              {{ validations.robotCategory[i].message.value }}
+              {{ validations.captainPhone.message.value }}
+            </span>
+          </template>
+        </fwb-input>
+
+        <h3 class="mt-4 mb-2 font-medium">Adres zamieszkania</h3>
+
+        <fwb-input
+          v-model="captain.street"
+          type="text"
+          name="captainStreet"
+          placeholder="Ulica i numer"
+          wrapper-class="form-input"
+          :validation-status="validations.captainStreet.status.value as any"
+          :required="true"
+          @change="resetValidation"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="validations.captainStreet.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+            >
+              {{ validations.captainStreet.message.value }}
+            </span>
+          </template>
+        </fwb-input>
+
+        <div class="flex gap-2 mb-2 *:w-full">
+          <fwb-input
+            v-model="captain.postalCode"
+            type="text"
+            name="captainPostalCode"
+            placeholder="Kod pocztowy"
+            wrapper-class="form-input"
+            :validation-status="validations.captainPostalCode.status.value as any"
+            :required="true"
+            @change="resetValidation"
+          >
+            <template #validationMessage>
+              <span
+                class="text-xs font-bold"
+                :class="validations.captainPostalCode.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              >
+                {{ validations.captainPostalCode.message.value }}
+              </span>
+            </template>
+          </fwb-input>
+
+          <fwb-input
+            v-model="captain.city"
+            type="text"
+            name="captainCity"
+            placeholder="Miejscowość"
+            wrapper-class="form-input"
+            :validation-status="validations.captainCity.status.value as any"
+            :required="true"
+            @change="resetValidation"
+          >
+            <template #validationMessage>
+              <span
+                class="text-xs font-bold"
+                :class="validations.captainCity.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              >
+                {{ validations.captainCity.message.value }}
+              </span>
+            </template>
+          </fwb-input>
+        </div>
+
+        <div></div>
+        <fwb-select
+          v-model="captain.country"
+          name="captainCountry"
+          class="w-full form-input"
+          :required="true"
+          :options="countries"
+          placeholder="Wybierz kraj"
+          :validation-status="validations.captainCountry.status.value as any"
+        >
+          <template #validationMessage>
+            <span
+              class="text-xs font-bold"
+              :class="validations.captainCountry.status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+            >
+              {{ validations.captainCountry.message.value }}
             </span>
           </template>
         </fwb-select>
-
-        <fwb-button color="red" @click="removeRobot(i)" class="h-10">Usuń</fwb-button>
       </div>
-    </div>
 
-    <div class="flex items-center gap-2 mb-4">
-      <fwb-checkbox
-        v-model="agreePrivacy"
-        name="agreePrivacy"
-        label="Wyrażam zgodę na przetwarzanie danych osobowych"
-        wrapper-class="form-input"
-        :required="true"
-      />
-    </div>
+      <div class="mb-6">
+        <h2 class="inline-flex items-center justify-between w-full mb-2 font-semibold">
+          <span>Zawodnicy ({{ participants.length }} z 9 możliwych)</span>
 
-    <div class="flex items-center gap-2 mb-6">
-      <fwb-checkbox
-        v-model="agreeTerms"
-        name="agreeTerms"
-        label="Akceptuję regulamin zawodów"
-        wrapper-class="form-input"
-        :required="true"
-      />
-    </div>
+          <fwb-button color="green" :disabled="participants.length + 1 >= maxParticipants" @click="addParticipant">
+            <template #prefix>
+              <lazy-client-only>
+                <fa-icon icon="fa-solid fa-plus" class="w-4 h-4" />
+              </lazy-client-only>
+            </template>
+            Dodaj zawodnika
+          </fwb-button>
+        </h2>
 
-    <fwb-button type="button" @click="submitForm">Zarejestruj zespół</fwb-button>
-  </form>
+        <div v-for="(participant, i) in participants" :key="i" class="flex gap-2 mb-2">
+          <fwb-input
+            v-model="participant.name"
+            type="text"
+            :name="'participantFirstName-' + i"
+            placeholder="Imię"
+            wrapper-class="form-input"
+            :validation-status="validations.participantFirstName[i].status.value as any"
+            :required="true"
+            @change="resetValidation"
+          >
+            <template #validationMessage>
+              <span
+                class="text-xs font-bold"
+                :class="
+                  validations.participantFirstName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'
+                "
+              >
+                {{ validations.participantFirstName[i].message.value }}
+              </span>
+            </template>
+          </fwb-input>
+
+          <fwb-input
+            v-model="participant.surname"
+            type="text"
+            :name="'participantLastName-' + i"
+            placeholder="Nazwisko"
+            wrapper-class="form-input"
+            :validation-status="validations.participantLastName[i].status.value as any"
+            :required="true"
+            @change="resetValidation"
+          >
+            <template #validationMessage>
+              <span
+                class="text-xs font-bold"
+                :class="validations.participantLastName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              >
+                {{ validations.participantLastName[i].message.value }}
+              </span>
+            </template>
+          </fwb-input>
+
+          <fwb-select
+            v-model="participant.shirtSize"
+            :name="'participantShirtSize-' + i"
+            :options="shirtSizes"
+            :required="true"
+            placeholder="Wybierz rozmiar koszulki"
+            class="form-input"
+            :validation-status="validations.participantShirt[i].status.value as any"
+          >
+            <template #validationMessage>
+              <span
+                class="text-xs font-bold"
+                :class="validations.participantShirt[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              >
+                {{ validations.participantShirt[i].message.value }}
+              </span>
+            </template>
+          </fwb-select>
+
+          <fwb-button color="red" @click="removeParticipant(i)" class="h-10">Usuń</fwb-button>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <h2 class="inline-flex items-center justify-between w-full mb-2 font-semibold">
+          <span>Roboty ({{ robots.length }} z 5 możliwych)</span>
+
+          <fwb-button color="green" :disabled="robots.length >= maxRobots" @click="addRobot">
+            <template #prefix>
+              <lazy-client-only>
+                <fa-icon icon="fa-solid fa-plus" class="w-4 h-4" />
+              </lazy-client-only>
+            </template>
+
+            Dodaj robota
+          </fwb-button>
+        </h2>
+
+        <div v-for="(robot, i) in robots" :key="i" class="flex gap-2 mb-2">
+          <fwb-input
+            v-model="robot.name"
+            type="text"
+            :name="'robotName-' + i"
+            placeholder="Nazwa robota"
+            wrapper-class="form-input"
+            :validation-status="validations.robotName[i].status.value as any"
+            :required="true"
+            @change="resetValidation"
+          >
+            <template #validationMessage>
+              <span
+                class="text-xs font-bold"
+                :class="validations.robotName[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              >
+                {{ validations.robotName[i].message.value }}
+              </span>
+            </template>
+          </fwb-input>
+
+          <fwb-select
+            v-model="robot.category"
+            :name="'robotCategory-' + i"
+            :options="categories"
+            :required="true"
+            placeholder="Wybierz kategorię"
+            :validation-status="validations.robotCategory[i].status.value as any"
+            class="form-input"
+          >
+            <template #validationMessage>
+              <span
+                class="text-xs font-bold"
+                :class="validations.robotCategory[i].status.value === 'success' ? 'text-green-500' : 'text-red-500'"
+              >
+                {{ validations.robotCategory[i].message.value }}
+              </span>
+            </template>
+          </fwb-select>
+
+          <fwb-button color="red" @click="removeRobot(i)" class="h-10">Usuń</fwb-button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 mb-4">
+        <fwb-checkbox
+          v-model="agreePrivacy"
+          name="agreePrivacy"
+          label="Wyrażam zgodę na przetwarzanie danych osobowych"
+          wrapper-class="form-input"
+          :required="true"
+        />
+      </div>
+
+      <div class="flex items-center gap-2 mb-6">
+        <fwb-checkbox
+          v-model="agreeTerms"
+          name="agreeTerms"
+          label="Akceptuję regulamin zawodów"
+          wrapper-class="form-input"
+          :required="true"
+        />
+      </div>
+
+      <fwb-button type="submit">Zarejestruj zespół</fwb-button>
+    </form>
+  </div>
 </template>
