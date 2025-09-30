@@ -18,7 +18,7 @@ export default defineEventHandler(async (): Promise<CountriesResponse | H3Error>
       .selectFrom('robocomp.countries' as any)
       .orderBy('name')
       .selectAll()
-      .execute()) as CountriesResponse[]
+      .execute())
     await kyselyDb.destroy()
     return {
       statusCode: 200,
