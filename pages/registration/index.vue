@@ -18,9 +18,10 @@ interface Robot {
 }
 
 const shirtSizes = computed(
-  () => (TSHIRT_END_DATE < new Date()
-         ? ['N/A']
-         : ['S', 'M', 'L', 'XL', 'XXL']
+  () => (
+    TSHIRT_END_DATE < new Date()
+      ? ['N/A']
+      : ['S', 'M', 'L', 'XL', 'XXL']
   ).map( (v) => ({ value: v, name: v }) )
 )
 
@@ -441,6 +442,7 @@ onMounted(async () => {
 
     <form v-else ref="$formRef" class="form-container" @submit.prevent="submitForm">
       <h2 class="mb-6 text-xl italic">Rejestracja jest otwarta do <span class="underline">{{ new Date(REGISTRATION_END_DATE).toLocaleString() }}</span></h2>
+      <span v-if="TSHIRT_END_DATE < new Date()" class="-mt-4 mb-4 underline text-red-500">Osoby zarejestrowane po {{ new Date(TSHIRT_END_DATE).toLocaleString() }} z przyczyn technicznych nie dostaną koszulek</span>
 
       <div class="mb-4">
         <label class="block mb-1 font-semibold">Nazwa zespołu</label>
