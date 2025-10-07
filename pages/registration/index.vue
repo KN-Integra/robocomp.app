@@ -22,7 +22,7 @@ const shirtSizes = computed(
     new Date(TSHIRT_END_DATE) < new Date()
       ? ['N/A']
       : ['S', 'M', 'L', 'XL', 'XXL']
-  ).map( (v) => ({ value: v, name: v }) )
+  ).map((v) => ({ value: v, name: v }))
 )
 
 const maxParticipants = 10
