@@ -4,7 +4,7 @@ import { FwbButton, FwbInput, FwbSelect, FwbCheckbox } from 'flowbite-vue'
 import type { IsExistTeamResponse } from '~/server/api/isExistTeam/index.get'
 import type { RegistrationRequest, RegistrationResponse } from '~/server/api/registration/index.post'
 
-import { REGISTRATION_END_DATE } from '~/settings/constants'
+import { REGISTRATION_END_DATE, TSHIRT_END_DATE } from '~/settings/constants'
 
 interface Participant {
   name: string
@@ -17,7 +17,14 @@ interface Robot {
   category: string
 }
 
-const shirtSizes = ['S', 'M', 'L', 'XL', 'XXL'].map((v) => ({ value: v, name: v }))
+const shirtSizes = computed(
+  () => (
+    new Date(TSHIRT_END_DATE) < new Date()
+      ? ['N/A']
+      : ['S', 'M', 'L', 'XL', 'XXL']
+  ).map((v) => ({ value: v, name: v }))
+)
+
 const maxParticipants = 10
 const maxRobots = 5
 
@@ -435,6 +442,7 @@ onMounted(async () => {
 
     <form v-else ref="$formRef" class="form-container" @submit.prevent="submitForm">
       <h2 class="mb-6 text-xl italic">Rejestracja jest otwarta do <span class="underline">{{ new Date(REGISTRATION_END_DATE).toLocaleString() }}</span></h2>
+      <span v-if="new Date(TSHIRT_END_DATE) < new Date()" class="-mt-4 mb-4 underline text-red-500">Osoby zarejestrowane po {{ new Date(TSHIRT_END_DATE).toLocaleString() }} z przyczyn technicznych nie dostaną koszulek</span>
 
       <div class="mb-4">
         <label class="block mb-1 font-semibold">Nazwa zespołu</label>
