@@ -19,7 +19,7 @@ interface Robot {
 
 const shirtSizes = computed(
   () => (
-    TSHIRT_END_DATE < new Date()
+    new Date(TSHIRT_END_DATE) < new Date()
       ? ['N/A']
       : ['S', 'M', 'L', 'XL', 'XXL']
   ).map( (v) => ({ value: v, name: v }) )
