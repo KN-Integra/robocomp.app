@@ -7,7 +7,7 @@ import { getMailTransporter } from '~/server/utils/mailer'
 
 import type { Database } from '~/types/db/Database'
 
-const shirtSizes = ['S', 'M', 'L', 'XL', 'XXL']
+const shirtSizes = ['N/A', 'S', 'M', 'L', 'XL', 'XXL']
 
 const runtimeConfig = useRuntimeConfig()
 
