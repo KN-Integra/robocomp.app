@@ -51,15 +51,12 @@ useLazyAsyncData(`${$props.scheduleName}-schedule`, async () => {
 
   const {
     results: schedule,
-    competitionNames,
-    competitionKeys,
     scheduleTypes,
-    events
   } = (response as ScheduleResponse).data
 
-  const data = prepareDataForSchedule($props.scheduleName, schedule, competitionNames, competitionKeys, scheduleTypes)
+  const data = prepareDataForSchedule($props.scheduleName, schedule, scheduleTypes.filter((s) => s !== 'organizational'))
 
-  chartData.value.labels = $props.scheduleName === 'robots' ? competitionNames : events
+  chartData.value.labels = data.labels
   chartOptions.value.plugins.annotation.annotations = data.annotations
   chartOptions.value.scales.y.min = data.eventStartDate
   chartOptions.value.scales.y.max = data.eventEndDate
@@ -88,7 +85,7 @@ onMounted(() => {
 
   setInterval(() => {
     refreshNuxtData(`${$props.scheduleName}-schedule`)
-  }, 60 * 1000)
+  }, 5 * 60 * 1000)
 })
 
 onUnmounted(() => {

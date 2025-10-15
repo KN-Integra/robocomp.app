@@ -68,7 +68,7 @@ const CHART_CONFIG = {
     },
     annotation: ANNOTATIONS_CONFIG,
     datalabels: {
-      display: true,
+      display: false,
       color: (ctx: { dataset: { label: string } }) => (ctx.dataset.label === 'Finał' ? 'white' : 'black'),
       formatter: (value: number, ctx: { dataset: { label: string } }) => {
         if (!Array.isArray(value)) {

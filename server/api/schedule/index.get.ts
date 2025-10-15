@@ -8,7 +8,8 @@ export interface Schedule {
   name: string
   start_date: string
   end_date: string
-  competition?: string
+  competition: string
+  type: string
 }
 
 export interface ScheduleResponse {
@@ -39,14 +40,13 @@ export default defineEventHandler(async (event): Promise<ScheduleResponse | H3Er
     const schedules = (await db
       .withSchema('robocomp')
       .selectFrom('schedule')
-      .innerJoin('competition', 'schedule.competition', 'competition.name')
       .select([
         'schedule.id',
-        sql<string>`REPLACE(schedule.name, ' ' || CAST(${new Date().getFullYear()} AS VARCHAR(4)), '')`.as('name'),
+        'schedule.name',
         'schedule.start_date',
         'schedule.end_date',
         'schedule.competition',
-        'competition.display_name'
+        'schedule.type'
       ] as any)
       .where(sql<boolean>`DATE_PART('year', schedule.start_date) = ${year}`)
       .where('schedule.name' as any, 'not like', '%Jury%')
@@ -59,8 +59,8 @@ export default defineEventHandler(async (event): Promise<ScheduleResponse | H3Er
       .toSorted((a, b) => b.competition!.localeCompare(a.competition!))
       .map((schedule) => ({
         key: schedule.competition,
-        name: schedule.display_name || schedule.competition,
-        type: schedule.name.split(' ')[0]
+        name: schedule.name,
+        type: schedule.type
       }))
 
     const events = schedules
@@ -70,10 +70,7 @@ export default defineEventHandler(async (event): Promise<ScheduleResponse | H3Er
     return {
       statusCode: 200,
       data: {
-        results: schedules.map((schedule) => ({
-          ...schedule,
-          name: schedule.display_name ? `${schedule.name.split(' ')[0]} ${schedule.display_name}` : schedule.name
-        })) as Schedule[],
+        results: schedules as Schedule[],
         competitionNames: [...new Set(competitions.map((competition) => competition.name))],
         competitionKeys: [...new Set(competitions.map((competition) => competition.key!))],
         scheduleTypes: [...new Set(competitions.map((competition) => competition.type))],
