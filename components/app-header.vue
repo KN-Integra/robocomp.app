@@ -92,7 +92,7 @@
 </template>
 
 <script lang="ts" setup>
-const links = [
+const links: { name: string; link: string; external?: boolean }[] = [
   { name: 'Harmonogram', link: '/blog/agenda' },
   { name: 'Regulaminy', link: '/blog/regulations' },
   // { name: 'Wyniki', link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
@@ -107,12 +107,15 @@ const links = [
   { name: 'Statystyki', link: '/blog/stats' },
   // { name: 'Zespoły', link: '/blog/teams' },
   { name: 'Dokumentacja', link: '/docs' },
-  { name: 'Archiwum', link: '/archive' }
+  { name: 'Archiwum', link: '/archive' },
+  { name: 'Admin panel', link: '/xillith' }
 ]
 
 const $route = useRoute()
 
 const filteredLinks = computed(() => {
+  if (!$route) return links
+
   let filtered = links.filter((link) => link.link !== $route.path)
 
   if ($route.path.startsWith('/archive') && $route.path !== '/archive') {

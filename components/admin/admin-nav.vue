@@ -17,7 +17,7 @@ async function logout() {
 
 <template>
   <lazy-client-only>
-    <fwb-sidebar class="flowbite fixed">
+    <fwb-sidebar class="fixed flowbite">
       <fwb-sidebar-logo name="XILLITH" logo="/icon.png" />
 
       <fwb-sidebar-item link="/xillith">
@@ -34,6 +34,14 @@ async function logout() {
         </template>
 
         <template #default>Harmonogram</template>
+      </fwb-sidebar-item>
+
+      <fwb-sidebar-item link="/xillith/registration-validation">
+        <template #icon>
+          <fa-icon icon="fa-regular fa-id-card" class="w-4 h-4" />
+        </template>
+
+        <template #default>Walidacja rejestracji</template>
       </fwb-sidebar-item>
 
       <fwb-sidebar-item link="/xillith/login" @click="logout()">

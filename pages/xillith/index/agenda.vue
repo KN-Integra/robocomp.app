@@ -23,7 +23,7 @@ const timeSchedule = ref([] as (Schedule & { changed: boolean; toRemove: boolean
 const rKey = ref((Math.random() * 10).toString())
 const eKey = ref((Math.random() * 10).toString())
 
-const { data } = useLazyAsyncData('schedule', async () => {
+const { data } = useLazyAsyncData('admin-schedule', async () => {
   if (import.meta.server) {
     return null
   }
@@ -63,19 +63,15 @@ const schedule = computed(() => {
   const robotsData = prepareDataForSchedule(
     'robots',
     timeSchedule.value,
-    data.value.competitionNames,
-    data.value.competitionKeys,
-    data.value.scheduleTypes
+    data.value.scheduleTypes.filter((s) => s !== 'organizational')
   )
   const eventsData = prepareDataForSchedule(
     'events',
     timeSchedule.value,
-    data.value.competitionNames,
-    data.value.competitionKeys,
-    data.value.scheduleTypes
+    data.value.scheduleTypes.filter((s) => s !== 'organizational')
   )
 
-  const rl = data.value.competitionNames
+  const rl = robotsData.labels
   const ro = {
     annotations: robotsData.annotations,
     yMin: robotsData.eventStartDate,
@@ -83,7 +79,7 @@ const schedule = computed(() => {
   }
   const rd = robotsData.datasets
 
-  const el = data.value.events
+  const el = eventsData.labels
   const eo = {
     annotations: eventsData.annotations,
     yMin: eventsData.eventStartDate,
@@ -137,7 +133,7 @@ function deleteSchedule(id: string) {
 }
 
 async function resetSchedule() {
-  await refreshNuxtData('schedule')
+  await refreshNuxtData('admin-schedule')
 }
 
 /** Save new schedule
@@ -175,17 +171,17 @@ async function saveSchedule() {
     alert('Wystąpił błąd podczas zapisywania harmonogramu:\n' + (error as Error).message)
   }
 
-  await refreshNuxtData('schedule')
+  await refreshNuxtData('admin-schedule')
 }
 </script>
 
 <template>
   <div class="flex flex-col w-full">
-    <h2 class="text-2xl font-bold mb-2">Harmonogram</h2>
+    <h2 class="mb-2 text-2xl font-bold dark:text-white">Harmonogram</h2>
 
     <section>
       <lazy-client-only>
-        <fwb-table class="flowbite-table mb-8 w-full">
+        <fwb-table class="w-full mb-8 flowbite-table">
           <fwb-table-head>
             <fwb-table-cell>ID</fwb-table-cell>
             <fwb-table-cell>Konkurencja</fwb-table-cell>
@@ -238,7 +234,7 @@ async function saveSchedule() {
         </fwb-table>
       </lazy-client-only>
 
-      <span class="inline-flex mb-6 gap-4 w-full justify-end">
+      <span class="inline-flex justify-end w-full gap-4 mb-6">
         <fwb-button color="alternative" :disabled="!timeSchedule.some((item) => item.changed)" @click="resetSchedule()">
           <template #prefix>
             <lazy-client-only>

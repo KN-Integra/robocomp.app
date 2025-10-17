@@ -5,7 +5,7 @@ import auth, { AccessResourceMethods } from '~/server/utils/auth'
 import type { Database } from '~/types/db/Database'
 
 export default defineEventHandler(async (event) => {
-  const isAuthorized = await auth.user(event, 'schedule', AccessResourceMethods.PATCH)
+  const isAuthorized = await auth.user(event, 'robots', AccessResourceMethods.PATCH)
 
   if (!isAuthorized) {
     return createError({ statusCode: 401, message: 'Unauthorized' })
@@ -18,15 +18,18 @@ export default defineEventHandler(async (event) => {
   const db = createKysely<Database>()
 
   try {
-    await db
-      .withSchema('robocomp')
-      .updateTable('schedule')
-      .set({
-        start_date: body.start_date,
-        end_date: body.end_date
-      })
-      .where('id', '=', Number(id))
-      .executeTakeFirst()
+    if (body.name !== undefined || body.competition !== undefined || body.status !== undefined) {
+      await db
+        .withSchema('robocomp')
+        .updateTable('robot')
+        .set({
+          name: body.name,
+          competition: body.competition,
+          status: body.status
+        })
+        .where('id', '=', Number(id))
+        .executeTakeFirst()
+    }
   } catch (error) {
     console.error(error)
 
@@ -34,7 +37,7 @@ export default defineEventHandler(async (event) => {
 
     return createError({
       statusCode: 500,
-      message: 'Failed to update schedule'
+      message: 'Failed to update robot'
     })
   }
 

@@ -1,12 +1,15 @@
 import type { Selectable } from 'kysely'
 
 export interface TeamsDetailsView {
-  name: string
+  team_id: number
+  team_name: string
   year: number
-  status: string
+  team_status: string
+  countries: string
   members_count: number
   robots_count: number
-  leader_email: string
+  leader_emails: string
+  leader_phones: string
   leaders: string
   participants: string
   robots: string

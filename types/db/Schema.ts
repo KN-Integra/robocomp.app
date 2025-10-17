@@ -1,15 +1,11 @@
 import type { Generated, Insertable, Selectable, Updateable } from 'kysely'
 
 export interface ParticipantTable {
-  id?: Generated<number>
+  id: Generated<number>
   first_name: string
   last_name: string
-  email: string
-  phone: string
-  street_address: string
-  admin_level_2: string
-  postal_code: string
-  country: string
+  year: number
+  size: string
 }
 
 export type ParticipantRow = Selectable<ParticipantTable>
@@ -21,7 +17,7 @@ export interface RobotTable {
   robot_no: number
   name: string
   year: number
-  team: number
+  team_id: number
   competition: string
   status: Generated<string>
 }
@@ -42,10 +38,11 @@ export type InsertableTeamRow = Insertable<TeamTable>
 export type UpdateableTeamRow = Updateable<TeamTable>
 
 export interface TeamsParticipantsTable {
-  teams_id: number
-  participants_id: number
+  team_id: number
+  participant_id: number
   role: Generated<string>
   status: Generated<string>
+  received_tshirt: Generated<boolean>
 }
 
 export type TeamsParticipantsRow = Selectable<TeamsParticipantsTable>
@@ -63,14 +60,18 @@ export interface RolesTable {
 export interface CompetitionsTable {
   name: string
   scoring_method: 'tournament_bracket' | 'votes' | 'time_shortest' | 'not-available'
+  color: string
+  display_name: string
+  active: Generated<boolean>
 }
 
 export interface ScheduleTable {
   id: Generated<number>
-  compeition: string
+  competition: string
   name: string
-  start: Date
-  end: Date
+  type: string
+  start_date: Date
+  end_date: Date
 }
 
 export interface GroupsTable {

@@ -1,6 +1,6 @@
 import { library, config } from '@fortawesome/fontawesome-svg-core'
 import { faInstagram, faSquareFacebook } from '@fortawesome/free-brands-svg-icons'
-import { faSun, faEye, faEyeSlash, faCalendar, faSquare } from '@fortawesome/free-regular-svg-icons'
+import { faSun, faEye, faEyeSlash, faCalendar, faSquare, faIdCard } from '@fortawesome/free-regular-svg-icons'
 import {
   faBars,
   faMoon,
@@ -22,7 +22,7 @@ config.autoAddCss = false
 // Brand icons
 library.add(faSquareFacebook, faInstagram)
 // Regular icons
-library.add(faSun, faEye, faEyeSlash, faCalendar, faSquare)
+library.add(faSun, faEye, faEyeSlash, faCalendar, faSquare, faIdCard)
 // Solid icons
 library.add(
   faMoon,
