@@ -2446,7 +2446,7 @@
   optionalDependencies:
     ipx "^2.1.1"
 
-"@nuxt/kit@3.18.1", "@nuxt/kit@^3.11.2", "@nuxt/kit@^3.13.2", "@nuxt/kit@^3.14.1592", "@nuxt/kit@^3.15.4", "@nuxt/kit@^3.16.0", "@nuxt/kit@^3.17.5", "@nuxt/kit@^3.17.6", "@nuxt/kit@^3.18.0", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.6.2", "@nuxt/kit@^3.9.0":
+"@nuxt/kit@3.18.1", "@nuxt/kit@^3.11.2", "@nuxt/kit@^3.13.2", "@nuxt/kit@^3.14.1592", "@nuxt/kit@^3.15.4", "@nuxt/kit@^3.16.0", "@nuxt/kit@^3.17.5", "@nuxt/kit@^3.17.6", "@nuxt/kit@^3.18.0", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.9.0":
   version "3.18.1"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.18.1.tgz#67b2fa8c5af7552f4a9dfa0160042849b8a0478f"
   integrity sha512-z6w1Fzv27CIKFlhct05rndkJSfoslplWH5fJ9dtusEvpYScLXp5cATWIbWkte9e9zFSmQTgDQJjNs3geQHE7og==
@@ -4721,15 +4721,15 @@
   resolved "https://registry.yarnpkg.com/@vercel/speed-insights/-/speed-insights-1.2.0.tgz#1656c3596d4ec02d93d301ca45944c1b9b245186"
   integrity sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw==
 
-"@vite-pwa/nuxt@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@vite-pwa/nuxt/-/nuxt-0.2.3.tgz#e53bfeb3b2cf39bc5e71571cfbe4b3eaab88e15e"
-  integrity sha512-dAf7crzDth3/hXQ/JAcO0vh9alFl6gUZ3Sw2so1wL4W4VZOMYIA8D3sMo5AH8zV+loUlkqsb6kutmz8IKdpjmQ==
+"@vite-pwa/nuxt@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@vite-pwa/nuxt/-/nuxt-1.0.7.tgz#5f88a98188ba69e4eeaadb8afdd48b5118559f98"
+  integrity sha512-AA6E2M6Nr9eZqE371R7LYPmfhZ9H/MxWt8GAR65hUQLdBzIAJtDmGoLB52tVdto8RXj5C3tYkr8XQdIY4+mr6w==
   dependencies:
-    "@nuxt/kit" "^3.6.2"
+    "@nuxt/kit" "^3.9.0"
     pathe "^1.1.1"
-    ufo "^1.3.1"
-    vite-plugin-pwa ">=0.16.5 <1"
+    ufo "^1.3.2"
+    vite-plugin-pwa "^1.1.0"
 
 "@vitejs/plugin-vue-jsx@^5.0.1":
   version "5.0.1"
@@ -16954,7 +16954,7 @@ typescript@^5.6.2, typescript@^5.7.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.9.2.tgz#d93450cddec5154a2d5cabe3b8102b83316fb2a6"
   integrity sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==
 
-ufo@1.6.1, ufo@^1.1.2, ufo@^1.3.1, ufo@^1.3.2, ufo@^1.5.3, ufo@^1.5.4, ufo@^1.6.1:
+ufo@1.6.1, ufo@^1.1.2, ufo@^1.3.2, ufo@^1.5.3, ufo@^1.5.4, ufo@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/ufo/-/ufo-1.6.1.tgz#ac2db1d54614d1b22c1d603e3aef44a85d8f146b"
   integrity sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==
@@ -17529,10 +17529,10 @@ vite-plugin-inspect@^11.3.0:
     unplugin-utils "^0.2.4"
     vite-dev-rpc "^1.1.0"
 
-"vite-plugin-pwa@>=0.16.5 <1":
-  version "0.21.2"
-  resolved "https://registry.yarnpkg.com/vite-plugin-pwa/-/vite-plugin-pwa-0.21.2.tgz#5c6c37f52e96939ba899c5e571c12b7faccc6c49"
-  integrity sha512-vFhH6Waw8itNu37hWUJxL50q+CBbNcMVzsKaYHQVrfxTt3ihk3PeLO22SbiP1UNWzcEPaTQv+YVxe4G0KOjAkg==
+vite-plugin-pwa@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-pwa/-/vite-plugin-pwa-1.1.0.tgz#3c08c638be084abda48fac977eac3e9cbcfb0d96"
+  integrity sha512-VsSpdubPzXhHWVINcSx6uHRMpOHVHQcHsef1QgkOlEoaIDAlssFEW88LBq1a59BuokAhsh2kUDJbaX1bZv4Bjw==
   dependencies:
     debug "^4.3.6"
     pretty-bytes "^6.1.1"
