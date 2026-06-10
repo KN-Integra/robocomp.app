@@ -10,10 +10,10 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "lint": "yarn lint:js && yarn lint:style",
+    "lint": "bun run lint:js && bun run lint:style",
     "lint:js": "eslint --ext \".ts,.vue\" --ignore-path .gitignore .",
     "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path '.gitignore' --fix",
-    "lint:fix": "yarn lint:js --fix",
+    "lint:fix": "bun run lint:js --fix",
     "prepare": "husky install",
     "test": "jest",
     "migration": "node -r dotenv/config ./migrations/index.mjs"
@@ -117,5 +117,12 @@
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "vue-jest": "^5.0.0-alpha.10"
-  }
+  },
+  "trustedDependencies": [
+    "@fortawesome/fontawesome-common-types",
+    "@fortawesome/fontawesome-svg-core",
+    "@parcel/watcher",
+    "@vercel/speed-insights",
+    "unrs-resolver"
+  ]
 }

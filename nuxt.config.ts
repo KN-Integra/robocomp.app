@@ -271,9 +271,9 @@ export default defineNuxtConfig({
       INTEGRA_API_URL: process.env.INTEGRA_API_URL,
       APP_TITLE: process.env.APP_TITLE,
       GALLERY_IMG_SIZE_PX: Number(process.env.GALLERY_IMG_SIZE_PX || 0),
-      EVENT_DATE: new Date(process.env.EVENT_DATE || 0),
-      REGISTRATION_END_DATE: new Date(process.env.REGISTRATION_END_DATE || 0),
-      TSHIRT_END_DATE: new Date(process.env.TSHIRT_END_DATE || 0)
+      EVENT_DATE: process.env.EVENT_DATE || 0,
+      REGISTRATION_END_DATE: process.env.REGISTRATION_END_DATE || 0,
+      TSHIRT_END_DATE: process.env.TSHIRT_END_DATE || 0
     }
   },
 

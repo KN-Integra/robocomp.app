@@ -5,8 +5,8 @@ import type { IsExistTeamResponse } from '~/server/api/isExistTeam/index.get'
 import type { RegistrationRequest, RegistrationResponse } from '~/server/api/registration/index.post'
 
 const runtimeConfig = useRuntimeConfig()
-const REGISTRATION_END_DATE = computed(() => runtimeConfig?.public?.REGISTRATION_END_DATE || new Date())
-const TSHIRT_END_DATE = computed(() => runtimeConfig?.public?.TSHIRT_END_DATE || new Date())
+const REGISTRATION_END_DATE = computed(() => new Date(runtimeConfig.public.REGISTRATION_END_DATE))
+const TSHIRT_END_DATE = computed(() => new Date(runtimeConfig.public.TSHIRT_END_DATE))
 
 interface Participant {
   name: string
@@ -443,8 +443,8 @@ onMounted(async () => {
     </div>
 
     <form v-else ref="$formRef" class="form-container" @submit.prevent="submitForm">
-      <h2 class="mb-6 text-xl italic">Rejestracja jest otwarta do <span class="underline">{{ REGISTRATION_END_DATE.toLocaleString() }}</span></h2>
-      <span v-if="TSHIRT_END_DATE < new Date()" class="mb-4 -mt-4 text-red-500 underline">Osoby zarejestrowane po {{ TSHIRT_END_DATE.toLocaleString() }} z przyczyn technicznych nie dostaną koszulek</span>
+      <h2 class="mb-6 text-xl italic">Rejestracja jest otwarta do <span class="underline">{{ REGISTRATION_END_DATE && REGISTRATION_END_DATE.toLocaleString() }}</span></h2>
+      <span v-if="TSHIRT_END_DATE < new Date()" class="mb-4 -mt-4 text-red-500 underline">Osoby zarejestrowane po {{ TSHIRT_END_DATE && TSHIRT_END_DATE.toLocaleString() }} z przyczyn technicznych nie dostaną koszulek</span>
 
       <div class="mb-4">
         <label class="block mb-1 font-semibold">Nazwa zespołu</label>

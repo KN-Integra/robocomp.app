@@ -1,9 +1,5 @@
-// const runtimeConfig = useRuntimeConfig()
-// const EVENT_DATE = computed(() => runtimeConfig.public.EVENT_DATE || new Date(0))
-const EVENT_DATE = new Date()
-
-export default function calculateCountdown() {
-  const delta = EVENT_DATE.getTime() - new Date().getTime()
+export default function calculateCountdown(eventDate: Date) {
+  const delta = eventDate.getTime() - new Date().getTime()
 
   if (delta < 0) {
     return '00:00:00:00'

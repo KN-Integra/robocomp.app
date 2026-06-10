@@ -10,7 +10,7 @@ export const useUserStore = defineStore({
       accessToken: '',
       tokenType: '',
       baseResource: '/robocomp',
-      INTEGRA_API_URL: process.env.INTEGRA_API_URL
+      INTEGRA_API_URL: ''
     }
   },
   actions: {

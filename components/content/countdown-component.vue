@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import calculateCountdown from '~/helpers/calculateCountdown'
 
-const countdown = ref<string>(calculateCountdown())
+const runtimeConfig = useRuntimeConfig()
+const EVENT_DATE = computed(() => new Date(runtimeConfig.public.EVENT_DATE))
+
+const countdown = ref<string>(calculateCountdown(EVENT_DATE.value))
 
 onBeforeMount(() => {
-  const currCountdown = calculateCountdown()
+  const currCountdown = calculateCountdown(EVENT_DATE.value)
 
   const interval = setInterval(
     () => {
-      countdown.value = calculateCountdown()
+      countdown.value = calculateCountdown(EVENT_DATE.value)
     },
     currCountdown.includes('.') ? 1 : 1000
   )
