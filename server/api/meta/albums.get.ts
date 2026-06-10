@@ -1,9 +1,11 @@
-import { GALLERY_IMG_SIZE_PX } from '~/settings/constants'
+import { computed } from 'vue'
 
 import type { H3Error } from 'h3'
 import type { MetaAlbum, MetaAlbumsData, MetaArray } from '~/types/meta'
 
 const runtimeConfig = useRuntimeConfig()
+
+const GALLERY_IMG_SIZE_PX = computed(() => runtimeConfig.public.GALLERY_IMG_SIZE_PX || 0)
 
 export interface AlbumResponse {
   data: MetaArray<MetaAlbum>['data']
@@ -88,7 +90,7 @@ export default defineEventHandler(async (): Promise<AlbumResponse | H3Error> => 
         data: v.photos.data.map((img) => ({
           ...img,
           webp_images: img.webp_images
-            .filter((i) => (i.width > i.height ? i.width : i.height) > GALLERY_IMG_SIZE_PX)
+            .filter((i) => (i.width > i.height ? i.width : i.height) > GALLERY_IMG_SIZE_PX.value)
             .sort((a, b) => b.width - a.width)
         }))
       }

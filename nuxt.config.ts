@@ -1,7 +1,5 @@
 import { resolve } from 'path'
 
-import { APP_TITLE } from './settings/constants'
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 const properties = [
   {
@@ -120,7 +118,7 @@ const icons = [
 ]
 
 const manifest = {
-  name: 'Festiwal Robotyki ROBOCOMP',
+  name: process.env.APP_TITLE,
   short_name: 'ROBOCOMP',
   theme_color: '#ffffff',
   icons: icons.map((icon) => ({
@@ -140,7 +138,7 @@ export default defineNuxtConfig({
       mode: 'out-in'
     },
     head: {
-      title: APP_TITLE,
+      title: process.env.APP_TITLE,
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -270,7 +268,12 @@ export default defineNuxtConfig({
     SMTP_PASS: process.env.SMTP_PASS,
     REGISTRATION_MAIL: process.env.REGISTRATION_MAIL,
     public: {
-      INTEGRA_API_URL: process.env.INTEGRA_API_URL
+      INTEGRA_API_URL: process.env.INTEGRA_API_URL,
+      APP_TITLE: process.env.APP_TITLE,
+      GALLERY_IMG_SIZE_PX: Number(process.env.GALLERY_IMG_SIZE_PX || 0),
+      EVENT_DATE: new Date(process.env.EVENT_DATE || 0),
+      REGISTRATION_END_DATE: new Date(process.env.REGISTRATION_END_DATE || 0),
+      TSHIRT_END_DATE: new Date(process.env.TSHIRT_END_DATE || 0)
     }
   },
 
